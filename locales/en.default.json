@@ -1,0 +1,106 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "404": {
+      "title": "404 Page Not Found",
+      "subtext": "We cannot find the page you're looking for.",
+      "link": "Continue shopping"
+    }
+  },
+  "sections": {
+    "header": {
+      "top_bar": {
+        "phone": "Contact"
+      }
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": {
+        "label": "Quantity",
+        "increase": "Increase quantity",
+        "decrease": "Decrease quantity"
+      },
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      }
+    },
+    "general": {
+      "from": "From",
+      "vendor": "By {{ vendor }}"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout",
+      "empty": "Your cart is empty",
+      "close": "Close cart",
+      "remove": "Remove item",
+      "note": "Order note",
+      "cookies_required": "Enable cookies to use the shopping cart"
+    }
+  },
+  "blogs": {
+    "comments": {
+      "title": "{{ count }} comment",
+      "title_plural": "{{ count }} comments",
+      "with_count": "{{ count }} comment",
+      "with_count_plural": "{{ count }} comments",
+      "posted": "Comment posted",
+      "form": {
+        "title": "Leave a comment",
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "post": "Post Comment"
+      }
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email",
+      "password": "Password",
+      "sign_in": "Sign In",
+      "forgot_password": "Forgot your password?",
+      "create_account": "Create account"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create"
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "date": "{{ date }}",
+      "cancelled": "Order cancelled on {{ date }}",
+      "cancelled_reason": "Reason: {{ reason }}"
+    },
+    "account": {
+      "title": "My Account",
+      "details": "Account details",
+      "view_addresses": "View addresses",
+      "logout": "Sign out"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close": "Close",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "open_cart": "Open cart",
+    "close_cart": "Close cart"
+  }
+}

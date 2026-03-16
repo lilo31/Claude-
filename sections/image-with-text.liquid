@@ -1,0 +1,166 @@
+<section class="section section--{{ section.settings.color_scheme }}">
+  <div class="container">
+    <div class="story-section__grid" style="{% if section.settings.image_position == 'right' %}direction: rtl;{% endif %}">
+
+      <div class="story-section__media" style="direction: ltr;">
+        {% if section.settings.image != blank %}
+          <img src="{{ section.settings.image | img_url: '900x' }}"
+               alt="{{ section.settings.image.alt | default: section.settings.title }}"
+               loading="lazy"
+               style="width:100%; aspect-ratio: {{ section.settings.image_ratio }}; object-fit: cover;">
+        {% else %}
+          {{ 'lifestyle-2' | placeholder_svg_tag }}
+        {% endif %}
+      </div>
+
+      <div class="story-section__content" style="direction: ltr;">
+        {% if section.settings.eyebrow != blank %}
+          <p class="section__eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="section__title">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.text != blank %}
+          <div style="font-size: var(--text-base); color: var(--color-text-secondary); line-height: 1.8; margin-top: var(--space-5);">
+            {{ section.settings.text }}
+          </div>
+        {% endif %}
+
+        {% for block in section.blocks %}
+          {% if block.type == 'button' %}
+            <div style="margin-top: var(--space-8);" {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.url }}"
+                 class="btn btn--{{ block.settings.style }}">
+                {{ block.settings.label }}
+              </a>
+            </div>
+          {% elsif block.type == 'feature_list' %}
+            <ul style="margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3);" {{ block.shopify_attributes }}>
+              {% assign items = block.settings.items | newline_to_br | split: '<br />' %}
+              {% for item in items %}
+                {% unless item == blank %}
+                  <li style="display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-text-secondary);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {{ item | strip }}
+                  </li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with Text",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "1/1", "label": "Square" },
+        { "value": "4/5", "label": "Portrait" },
+        { "value": "16/9", "label": "Landscape" }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "darker", "label": "Dark" },
+        { "value": "dark", "label": "Dark Secondary" }
+      ],
+      "default": "darker"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "primary", "label": "Primary" },
+            { "value": "outline", "label": "Outline" },
+            { "value": "ghost", "label": "Ghost" }
+          ],
+          "default": "primary"
+        }
+      ]
+    },
+    {
+      "type": "feature_list",
+      "name": "Feature List",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "items",
+          "label": "Items (one per line)",
+          "default": "Premium materials\nEthically sourced\nHandcrafted quality"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text"
+    }
+  ]
+}
+{% endschema %}

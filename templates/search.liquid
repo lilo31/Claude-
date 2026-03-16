@@ -1,0 +1,86 @@
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-header__title">
+      {% if search.performed %}
+        Search Results for &ldquo;{{ search.terms | escape }}&rdquo;
+      {% else %}
+        Search
+      {% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="search-page">
+
+    <form action="/search" method="get" class="search-form">
+      <input class="search-form__input"
+             type="search"
+             name="q"
+             value="{{ search.terms | escape }}"
+             placeholder="Search products, articles..."
+             aria-label="Search"
+             autofocus>
+      <input type="hidden" name="type" value="product,article,page">
+      <button type="submit" class="search-form__btn" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </form>
+
+    {% if search.performed %}
+      {% if search.results_count == 0 %}
+        <div style="text-align: center; padding: var(--space-16) 0;">
+          <p style="color: var(--color-text-muted); font-size: var(--text-lg);">
+            No results found for &ldquo;{{ search.terms | escape }}&rdquo;
+          </p>
+          <p style="color: var(--color-text-muted); margin-top: var(--space-3);">
+            Try different keywords or <a href="/collections/all" style="color: var(--color-accent);">browse all products</a>.
+          </p>
+        </div>
+      {% else %}
+        <p style="text-align: center; color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: var(--space-10);">
+          {{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %}
+        </p>
+
+        {% paginate search.results by 12 %}
+          <div class="product-grid product-grid--4">
+            {% for item in search.results %}
+              {% if item.object_type == 'product' %}
+                {% render 'product-card', product: item %}
+              {% else %}
+                <article>
+                  <a href="{{ item.url }}" style="font-family: var(--font-heading); font-size: var(--text-xl); color: var(--color-text);">{{ item.title }}</a>
+                  {% if item.excerpt %}
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2);">{{ item.excerpt | strip_html | truncate: 120 }}</p>
+                  {% endif %}
+                </article>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          {% if paginate.pages > 1 %}
+            <div class="pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="pagination__btn">‹</a>
+              {% endif %}
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="pagination__btn">{{ part.title }}</a>
+                {% else %}
+                  <span class="pagination__btn {% if part.title == paginate.current_page %}active{% endif %}">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="pagination__btn">›</a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endpaginate %}
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>

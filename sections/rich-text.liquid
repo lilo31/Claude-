@@ -1,0 +1,122 @@
+<section class="section section--{{ section.settings.color_scheme }}" style="text-align: {{ section.settings.alignment }};">
+  <div class="container">
+    <div style="max-width: {{ section.settings.max_width }}px; {% if section.settings.alignment == 'center' %}margin: 0 auto;{% endif %}">
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="section__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% if section.settings.title != blank %}
+        <h2 class="section__title">{{ section.settings.title }}</h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div style="margin-top: var(--space-5); font-size: var(--text-base); color: var(--color-text-secondary); line-height: 1.8;">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.btn_label != blank %}
+        <div style="margin-top: var(--space-8);">
+          <a href="{{ section.settings.btn_url }}"
+             class="btn btn--{{ section.settings.btn_style }}{% if section.settings.btn_size == 'large' %} btn--lg{% endif %}">
+            {{ section.settings.btn_label }}
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich Text",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Talk about your brand"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "btn_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "ghost", "label": "Ghost" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "btn_size",
+      "label": "Button size",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content max width",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "default": 700,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "darker", "label": "Dark" },
+        { "value": "dark", "label": "Dark Secondary" }
+      ],
+      "default": "darker"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Text"
+    }
+  ]
+}
+{% endschema %}

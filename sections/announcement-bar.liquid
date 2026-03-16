@@ -1,0 +1,49 @@
+{% if section.settings.show_announcement %}
+  <div class="announcement-bar" role="region" aria-label="Announcement">
+    {% if section.blocks.size > 1 %}
+      {% for block in section.blocks %}
+        <div class="announcement-bar__slide" {{ block.shopify_attributes }}>
+          {{ block.settings.text }}
+        </div>
+      {% endfor %}
+    {% elsif section.blocks.size == 1 %}
+      {{ section.blocks[0].settings.text }}
+    {% else %}
+      {{ section.settings.text }}
+    {% endif %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Announcement text",
+      "default": "<p>Free shipping on orders over $150 &mdash; <a href='/collections/all'>Shop Now</a></p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Free shipping on orders over $150</p>"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

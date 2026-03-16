@@ -1,0 +1,100 @@
+<section class="newsletter-section section--{{ section.settings.color_scheme }}">
+  <div class="container">
+    <div class="newsletter-section__content">
+      {% if section.settings.eyebrow != blank %}
+        <p class="section__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2 class="section__title">{{ section.settings.title }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-3);">
+          {{ section.settings.subtitle }}
+        </p>
+      {% endif %}
+
+      {% form 'customer', id: 'newsletter-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="newsletter-form">
+          <input class="newsletter-form__input"
+                 type="email"
+                 name="contact[email]"
+                 placeholder="{{ section.settings.placeholder }}"
+                 required
+                 aria-label="Email address">
+          <button class="newsletter-form__btn" type="submit">
+            {{ section.settings.btn_label }}
+          </button>
+        </div>
+        {% if form.posted_successfully? %}
+          <p style="margin-top: var(--space-4); color: var(--color-accent); font-size: var(--text-sm);">
+            Thank you for subscribing!
+          </p>
+        {% endif %}
+      {% endform %}
+
+      {% if section.settings.disclaimer != blank %}
+        <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-4);">
+          {{ section.settings.disclaimer }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Join the Inner Circle"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Be the first to know about new arrivals, exclusive offers, and the latest from Revive."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Input placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Disclaimer text",
+      "default": "By subscribing, you agree to our privacy policy. Unsubscribe anytime."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "darker", "label": "Dark" },
+        { "value": "dark", "label": "Dark Secondary" }
+      ],
+      "default": "dark"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

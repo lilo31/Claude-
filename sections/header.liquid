@@ -1,0 +1,128 @@
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="site-header__inner">
+
+      <!-- Left nav -->
+      <nav class="site-header__nav" aria-label="Primary left">
+        {% for link in linklists[section.settings.menu].links limit: 3 %}
+          <div class="site-header__nav-item">
+            <a href="{{ link.url }}" class="site-header__nav-link{% if link.active %} active{% endif %}">
+              {{ link.title }}
+            </a>
+            {% if link.links.size > 0 %}
+              <div class="site-header__dropdown">
+                {% for child in link.links %}
+                  <a href="{{ child.url }}" class="site-header__dropdown-link">{{ child.title }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </nav>
+
+      <!-- Logo -->
+      <a href="/" class="site-header__logo" aria-label="{{ shop.name }}">
+        {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | img_url: '300x' }}"
+               alt="{{ shop.name }}"
+               width="{{ section.settings.logo_width }}"
+               loading="eager">
+        {% else %}
+          {{ shop.name }}
+        {% endif %}
+      </a>
+
+      <!-- Right nav + actions -->
+      <div class="site-header__actions">
+        {% assign links = linklists[section.settings.menu].links %}
+        {% if links.size > 3 %}
+          <nav class="site-header__nav" aria-label="Primary right">
+            {% for link in links offset: 3 limit: 3 %}
+              <div class="site-header__nav-item">
+                <a href="{{ link.url }}" class="site-header__nav-link{% if link.active %} active{% endif %}">
+                  {{ link.title }}
+                </a>
+                {% if link.links.size > 0 %}
+                  <div class="site-header__dropdown">
+                    {% for child in link.links %}
+                      <a href="{{ child.url }}" class="site-header__dropdown-link">{{ child.title }}</a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </nav>
+        {% endif %}
+
+        {% if section.settings.show_search %}
+          <a href="/search" class="site-header__action-btn" aria-label="Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </a>
+        {% endif %}
+
+        {% if shop.customer_accounts_enabled %}
+          <a href="{{ routes.account_url }}" class="site-header__action-btn" aria-label="Account">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+        {% endif %}
+
+        <button class="site-header__action-btn" data-cart-trigger aria-label="Open cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="m6 2 3 6h6l3-6"></path>
+            <path d="M1 9h22v13H1z"></path>
+          </svg>
+          <span class="site-header__cart-count" aria-label="{{ cart.item_count }} items" style="display:none">
+            {{ cart.item_count }}
+          </span>
+        </button>
+
+        <button class="site-header__hamburger" aria-label="Open menu" aria-controls="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width (px)",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "default": 140
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

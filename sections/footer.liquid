@@ -1,0 +1,156 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="site-footer__main">
+
+      <!-- Brand column -->
+      <div class="site-footer__brand">
+        <a href="/" class="site-footer__logo">{{ shop.name }}</a>
+        <p class="site-footer__tagline">{{ section.settings.tagline }}</p>
+
+        <div class="site-footer__social">
+          {% if section.settings.instagram_url != blank %}
+            <a href="{{ section.settings.instagram_url }}" class="site-footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+          {% endif %}
+          {% if section.settings.facebook_url != blank %}
+            <a href="{{ section.settings.facebook_url }}" class="site-footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+          {% endif %}
+          {% if section.settings.twitter_url != blank %}
+            <a href="{{ section.settings.twitter_url }}" class="site-footer__social-link" aria-label="Twitter / X" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 4l16 16M4 20L20 4"></path>
+              </svg>
+            </a>
+          {% endif %}
+          {% if section.settings.pinterest_url != blank %}
+            <a href="{{ section.settings.pinterest_url }}" class="site-footer__social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.17 1.22-5.17s-.31-.62-.31-1.55c0-1.45.84-2.54 1.89-2.54.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.89 1.54 1.89 1.85 0 3.09-2.37 3.09-5.19 0-2.15-1.45-3.76-4.08-3.76-2.97 0-4.81 2.22-4.81 4.7 0 .85.25 1.45.64 1.91.18.21.2.3.14.54-.05.17-.15.59-.2.76-.06.24-.25.33-.46.24-1.31-.54-1.93-1.98-1.93-3.6 0-2.67 2.25-5.87 6.71-5.87 3.59 0 5.96 2.6 5.96 5.4 0 3.71-2.06 6.48-5.1 6.48-1.02 0-1.98-.55-2.31-1.18l-.63 2.41c-.23.89-.85 2-1.26 2.68.95.29 1.96.45 3.01.45 5.52 0 10-4.48 10-10S17.52 2 12 2z"></path>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Navigation columns -->
+      {% for block in section.blocks %}
+        {% if block.type == 'link_list' %}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <h3 class="site-footer__col-title">{{ block.settings.heading }}</h3>
+            <ul class="site-footer__links">
+              {% for link in linklists[block.settings.menu].links %}
+                <li>
+                  <a href="{{ link.url }}" class="site-footer__link">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% elsif block.type == 'text' %}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <h3 class="site-footer__col-title">{{ block.settings.heading }}</h3>
+            <div class="site-footer__text">
+              {{ block.settings.text }}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="site-footer__bottom">
+      <p class="site-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.
+        &mdash; Powered by <a href="https://www.shopify.com" target="_blank" rel="noopener">Shopify</a>
+      </p>
+      <div class="site-footer__payment">
+        {% for type in shop.enabled_payment_types %}
+          {{ type | payment_type_svg_tag: class: 'site-footer__payment-icon' }}
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand tagline",
+      "default": "Crafted with intention. Worn with purpose. Every detail tells a story of refined excellence."
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter / X URL"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Link list",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick Links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Contact"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>hello@revivebrand.com</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3
+}
+{% endschema %}

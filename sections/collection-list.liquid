@@ -1,0 +1,132 @@
+<section class="section section--{{ section.settings.color_scheme }}">
+  <div class="container">
+
+    <div class="section__header {% if section.settings.center_heading %}section__header--center{% endif %}">
+      {% if section.settings.eyebrow != blank %}
+        <p class="section__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="section__title">{{ section.settings.title }}</h2>
+      {% endif %}
+    </div>
+
+    <div class="product-grid product-grid--{{ section.settings.columns }}">
+      {% for block in section.blocks %}
+        {% assign coll = collections[block.settings.collection] %}
+        <a href="{% if coll != blank %}{{ coll.url }}{% else %}#{% endif %}" class="product-card" style="text-decoration: none;" {{ block.shopify_attributes }}>
+          <div class="product-card__media" style="aspect-ratio: 3/4;">
+            {% if block.settings.image != blank %}
+              <img class="product-card__image"
+                   src="{{ block.settings.image | img_url: '600x' }}"
+                   alt="{{ block.settings.title | default: coll.title }}"
+                   loading="lazy">
+            {% elsif coll != blank and coll.image != blank %}
+              <img class="product-card__image"
+                   src="{{ coll.image | img_url: '600x' }}"
+                   alt="{{ coll.title }}"
+                   loading="lazy">
+            {% else %}
+              {{ 'collection-1' | placeholder_svg_tag: 'product-card__image' }}
+            {% endif %}
+            <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 50%);"></div>
+            <div style="position:absolute; bottom: var(--space-6); left: var(--space-6); right: var(--space-6);">
+              <p style="font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-2);">
+                {{ block.settings.eyebrow | default: 'Collection' }}
+              </p>
+              <h3 style="font-family: var(--font-heading); font-size: var(--text-2xl); font-weight: 400; color: var(--color-text);">
+                {{ block.settings.title | default: coll.title | default: 'Collection' }}
+              </h3>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection List",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "checkbox",
+      "id": "center_heading",
+      "label": "Center heading",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "darker", "label": "Dark" },
+        { "value": "dark", "label": "Dark Secondary" }
+      ],
+      "default": "darker"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image (overrides collection image)"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title override"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection List",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

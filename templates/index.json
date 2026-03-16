@@ -1,0 +1,209 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "New Collection — 2025",
+        "title": "<p>Wear Your <em>Story</em></p>",
+        "subtitle": "Curated pieces crafted from the world's finest materials. Designed for those who believe style is a form of self-expression.",
+        "btn_primary_label": "Explore Collection",
+        "btn_primary_url": "/collections/all",
+        "btn_secondary_label": "Our Story",
+        "btn_secondary_url": "/pages/about",
+        "content_alignment": "left",
+        "min_height": 100,
+        "overlay_opacity": 50,
+        "show_scroll_indicator": true
+      }
+    },
+    "marquee": {
+      "type": "marquee",
+      "blocks": {
+        "item1": {
+          "type": "item",
+          "settings": { "text": "Free Shipping Over $150" }
+        },
+        "item2": {
+          "type": "item",
+          "settings": { "text": "Complimentary Gift Wrapping" }
+        },
+        "item3": {
+          "type": "item",
+          "settings": { "text": "Sustainably Crafted" }
+        },
+        "item4": {
+          "type": "item",
+          "settings": { "text": "30-Day Returns" }
+        },
+        "item5": {
+          "type": "item",
+          "settings": { "text": "Exclusive Members Access" }
+        }
+      },
+      "block_order": ["item1", "item2", "item3", "item4", "item5"]
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Just Arrived",
+        "title": "New Arrivals",
+        "subtitle": "The latest additions to our curated collection.",
+        "columns": "4",
+        "product_limit": 4,
+        "center_heading": true,
+        "show_view_all": true,
+        "view_all_label": "View All",
+        "color_scheme": "darker"
+      }
+    },
+    "split-banner": {
+      "type": "split-banner",
+      "settings": {
+        "color_scheme": "dark"
+      },
+      "blocks": {
+        "panel1": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Women",
+            "title": "New Season Looks",
+            "btn_label": "Shop Women",
+            "btn_url": "/collections/women"
+          }
+        },
+        "panel2": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Men",
+            "title": "Refined Essentials",
+            "btn_label": "Shop Men",
+            "btn_url": "/collections/men"
+          }
+        }
+      },
+      "block_order": ["panel1", "panel2"]
+    },
+    "featured-collection-2": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "The Edit",
+        "title": "Best Sellers",
+        "columns": "3",
+        "product_limit": 3,
+        "center_heading": true,
+        "show_view_all": true,
+        "view_all_label": "Shop All",
+        "color_scheme": "dark"
+      }
+    },
+    "story": {
+      "type": "story-section",
+      "settings": {
+        "eyebrow": "Our Story",
+        "title": "Crafted with Intention",
+        "text": "<p>Born from a passion for exceptional craftsmanship, Revive was founded on the belief that what you wear should reflect who you are.</p><p>Each piece is thoughtfully designed, ethically produced, and built to last beyond seasons.</p>",
+        "btn_label": "Discover Our Story",
+        "btn_url": "/pages/about",
+        "image_position": "left",
+        "color_scheme": "darker"
+      },
+      "blocks": {
+        "stat1": {
+          "type": "stat",
+          "settings": { "number": "10+", "label": "Years of Craft" }
+        },
+        "stat2": {
+          "type": "stat",
+          "settings": { "number": "50+", "label": "Master Artisans" }
+        }
+      },
+      "block_order": ["stat1", "stat2"]
+    },
+    "features": {
+      "type": "features-bar",
+      "settings": {
+        "color_scheme": "dark"
+      },
+      "blocks": {
+        "f1": {
+          "type": "feature",
+          "settings": { "icon": "shipping", "title": "Free Shipping", "text": "On orders over $150" }
+        },
+        "f2": {
+          "type": "feature",
+          "settings": { "icon": "returns", "title": "Easy Returns", "text": "30-day hassle-free returns" }
+        },
+        "f3": {
+          "type": "feature",
+          "settings": { "icon": "secure", "title": "Secure Payment", "text": "256-bit SSL encryption" }
+        },
+        "f4": {
+          "type": "feature",
+          "settings": { "icon": "quality", "title": "Premium Quality", "text": "Finest materials only" }
+        }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"]
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "eyebrow": "Customer Reviews",
+        "title": "Loved by Thousands",
+        "color_scheme": "darker"
+      },
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "text": "The quality is exceptional. Every stitch, every material, every detail has been thoughtfully considered. This is what luxury truly feels like.",
+            "author": "Alexandra M.",
+            "location": "Verified Purchase"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "text": "I've been searching for a brand that aligns with my values. Revive is everything I was looking for — sustainable, beautiful, and incredibly well-made.",
+            "author": "James K.",
+            "location": "Verified Purchase"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "text": "Worth every penny. The craftsmanship is unlike anything I've seen at this price point. I'll be a customer for life.",
+            "author": "Sofia R.",
+            "location": "Verified Purchase"
+          }
+        }
+      },
+      "block_order": ["t1", "t2", "t3"]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "eyebrow": "Stay Connected",
+        "title": "Join the Inner Circle",
+        "subtitle": "Be the first to know about new arrivals, exclusive offers, and the latest from Revive.",
+        "placeholder": "Your email address",
+        "btn_label": "Subscribe",
+        "disclaimer": "By subscribing, you agree to our privacy policy. Unsubscribe anytime.",
+        "color_scheme": "dark"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "marquee",
+    "featured-collection",
+    "split-banner",
+    "featured-collection-2",
+    "story",
+    "features",
+    "testimonials",
+    "newsletter"
+  ]
+}

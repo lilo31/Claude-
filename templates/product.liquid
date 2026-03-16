@@ -1,0 +1,219 @@
+<div class="container">
+  {% render 'breadcrumb' %}
+</div>
+
+<div class="product-page">
+  <div class="container">
+    <div class="product-page__grid">
+
+      <!-- Gallery -->
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | img_url: '900x1200' }}"
+                 alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                 id="product-gallery-main"
+                 width="900"
+                 height="1200"
+                 loading="eager">
+          {% else %}
+            {{ product | img_url: '900x1200' | img_tag: product.title }}
+          {% endif %}
+        </div>
+
+        {% if product.images.size > 1 %}
+          <div class="product-gallery__thumbs">
+            {% for image in product.images limit: 5 %}
+              <div class="product-gallery__thumb{% if forloop.first %} active{% endif %}"
+                   data-src="{{ image | img_url: '900x1200' }}">
+                <img src="{{ image | img_url: '100x' }}"
+                     alt="{{ image.alt | default: product.title | escape }}"
+                     loading="lazy"
+                     width="100"
+                     height="133">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        {% if product.vendor %}
+          <p class="product-card__vendor">{{ product.vendor }}</p>
+        {% endif %}
+
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        <div class="product-info__price">
+          {% if product.compare_at_price > product.price %}
+            <span data-current-price>{{ product.price | money }}</span>
+            <span class="product-info__price--compare">{{ product.compare_at_price | money }}</span>
+          {% else %}
+            <span data-current-price>{{ product.price | money }}</span>
+          {% endif %}
+        </div>
+
+        <div class="product-info__divider"></div>
+
+        <form action="/cart/add" method="post" data-add-to-cart>
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+          <!-- Variant selectors -->
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <div style="margin-bottom: var(--space-5);">
+                <p class="product-info__variant-label">
+                  {{ option.name }}
+                  <span>: {{ option.selected_value }}</span>
+                </p>
+
+                {% if option.name == 'Color' or option.name == 'Colour' %}
+                  <div class="color-swatches">
+                    {% for value in option.values %}
+                      <button type="button"
+                              class="color-swatch{% if value == option.selected_value %} active{% endif %}"
+                              title="{{ value }}"
+                              style="background-color: {{ value | downcase | replace: ' ', '' }};"
+                              data-option="{{ option.position }}"
+                              data-value="{{ value }}">
+                      </button>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <div class="variant-buttons">
+                    {% for value in option.values %}
+                      <button type="button"
+                              class="variant-btn{% if value == option.selected_value %} active{% endif %}"
+                              data-option="{{ option.position }}"
+                              data-value="{{ value }}">
+                        {{ value }}
+                      </button>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <!-- Native select (hidden, updated by JS) -->
+            <select name="id" data-variant-select style="display:none">
+              {% for variant in product.variants %}
+                <option value="{{ variant.id }}"
+                        {% unless variant.available %}disabled{% endunless %}
+                        data-price="{{ variant.price }}"
+                        data-available="{{ variant.available }}">
+                  {{ variant.title }} - {{ variant.price | money }}
+                </option>
+              {% endfor %}
+            </select>
+          {% endunless %}
+
+          <div class="product-info__divider"></div>
+
+          <!-- Quantity + Add to Cart -->
+          <div class="product-info__add-to-cart">
+            <div class="product-info__qty">
+              <button type="button" class="product-info__qty-btn" data-qty="decrease" aria-label="Decrease quantity">−</button>
+              <input type="number" name="quantity" value="1" min="1" class="product-info__qty-input" aria-label="Quantity">
+              <button type="button" class="product-info__qty-btn" data-qty="increase" aria-label="Increase quantity">+</button>
+            </div>
+
+            <button type="submit"
+                    class="btn btn--primary"
+                    style="flex: 1; height: 52px;"
+                    data-atc-btn
+                    {% unless product.available %}disabled{% endunless %}>
+              {% if product.available %}
+                Add to Cart
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+
+          <!-- Wishlist -->
+          <button type="button" class="btn btn--outline btn--full" style="margin-top: var(--space-3);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            Save to Wishlist
+          </button>
+        </form>
+
+        <div class="product-info__divider"></div>
+
+        <!-- Short description -->
+        {% if product.metafields.custom.short_description %}
+          <p class="product-info__description">{{ product.metafields.custom.short_description }}</p>
+        {% endif %}
+
+        <!-- Accordion: Full Description, Shipping, Care -->
+        <div class="product-info__accordion">
+          {% if product.description != blank %}
+            <div class="accordion-item">
+              <button class="accordion-item__btn" aria-expanded="false">
+                Description
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="accordion-item__content">
+                <div class="accordion-item__inner">{{ product.description }}</div>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="accordion-item">
+            <button class="accordion-item__btn" aria-expanded="false">
+              Shipping & Returns
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="accordion-item__content">
+              <div class="accordion-item__inner">
+                <p>Free standard shipping on orders over $150. Express delivery available at checkout.</p>
+                <p style="margin-top: var(--space-3);">We offer free returns within 30 days of purchase. Items must be in original condition with tags attached.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-item__btn" aria-expanded="false">
+              Care Instructions
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="accordion-item__content">
+              <div class="accordion-item__inner">
+                {% if product.metafields.custom.care_instructions %}
+                  {{ product.metafields.custom.care_instructions }}
+                {% else %}
+                  <p>Please refer to the garment care label for specific washing instructions. We recommend gentle hand washing or dry cleaning for delicate materials.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- You May Also Like -->
+    {% if recommendations.products_count > 0 %}
+      <div style="margin-top: var(--space-24);">
+        <div class="section__header section__header--center" style="margin-bottom: var(--space-12);">
+          <p class="section__eyebrow">Complete the Look</p>
+          <h2 class="section__title">You May Also Like</h2>
+        </div>
+        <div class="product-grid product-grid--4">
+          {% for rec_product in recommendations.products limit: 4 %}
+            {% render 'product-card', product: rec_product %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>

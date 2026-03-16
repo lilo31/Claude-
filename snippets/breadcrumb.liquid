@@ -1,0 +1,32 @@
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a>
+  <span class="breadcrumb__separator" aria-hidden="true">/</span>
+
+  {% if template.name == 'collection' %}
+    <span aria-current="page">{{ collection.title }}</span>
+
+  {% elsif template.name == 'product' %}
+    {% if collection %}
+      <a href="{{ collection.url }}">{{ collection.title }}</a>
+      <span class="breadcrumb__separator" aria-hidden="true">/</span>
+    {% endif %}
+    <span aria-current="page">{{ product.title }}</span>
+
+  {% elsif template.name == 'page' %}
+    <span aria-current="page">{{ page.title }}</span>
+
+  {% elsif template.name == 'blog' %}
+    <span aria-current="page">{{ blog.title }}</span>
+
+  {% elsif template.name == 'article' %}
+    <a href="{{ blog.url }}">{{ blog.title }}</a>
+    <span class="breadcrumb__separator" aria-hidden="true">/</span>
+    <span aria-current="page">{{ article.title }}</span>
+
+  {% elsif template.name == 'cart' %}
+    <span aria-current="page">Cart</span>
+
+  {% elsif template.name == 'search' %}
+    <span aria-current="page">Search</span>
+  {% endif %}
+</nav>

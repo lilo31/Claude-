@@ -1,0 +1,113 @@
+<section class="section section--{{ section.settings.color_scheme }}">
+  <div class="container">
+
+    {% if section.settings.title != blank %}
+      <div class="section__header section__header--center" style="margin-bottom: var(--space-10);">
+        <h2 class="section__title">{{ section.settings.title }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="split-banner">
+      {% for block in section.blocks %}
+        <div class="split-banner__item" {{ block.shopify_attributes }}>
+          <div class="split-banner__media">
+            {% if block.settings.image != blank %}
+              <img src="{{ block.settings.image | img_url: '900x' }}"
+                   alt="{{ block.settings.image.alt | default: block.settings.title }}"
+                   loading="lazy"
+                   width="900"
+                   height="1125">
+            {% else %}
+              {{ 'collection-' | append: forloop.index | placeholder_svg_tag }}
+            {% endif %}
+          </div>
+          <div class="split-banner__overlay"></div>
+          <div class="split-banner__content">
+            {% if block.settings.eyebrow != blank %}
+              <p class="split-banner__eyebrow">{{ block.settings.eyebrow }}</p>
+            {% endif %}
+            {% if block.settings.title != blank %}
+              <h3 class="split-banner__title">{{ block.settings.title }}</h3>
+            {% endif %}
+            {% if block.settings.btn_label != blank %}
+              <a href="{{ block.settings.btn_url }}" class="btn btn--outline">
+                {{ block.settings.btn_label }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Split Banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section heading"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "darker", "label": "Dark" },
+        { "value": "dark", "label": "Dark Secondary" }
+      ],
+      "default": "dark"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "panel",
+      "name": "Panel",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "Women"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "New Season"
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "btn_url",
+          "label": "Button URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Split Banner",
+      "blocks": [
+        { "type": "panel" },
+        { "type": "panel" }
+      ]
+    }
+  ],
+  "max_blocks": 3
+}
+{% endschema %}

@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-homepage",
+      "settings": {
+        "hero_eyebrow": "Certified Organic Seeds",
+        "hero_title": "Grow Your Best Garden Yet",
+        "hero_subtitle": "Heirloom, open-pollinated seeds — sustainably grown and rigorously tested for maximum germination.",
+        "hero_cta_label": "Shop Seeds",
+        "hero_cta_url": "/collections/all",
+        "hero_secondary_label": "Learn More",
+        "hero_secondary_url": "/pages/about",
+        "collection_eyebrow": "This Season's Picks",
+        "collection_title": "Featured Seeds",
+        "collection_subtitle": "Hand-selected varieties for beginner and experienced gardeners alike.",
+        "products_to_show": 4,
+        "show_view_all": true,
+        "show_about": true,
+        "about_title": "Seeds Rooted in Tradition, Grown for Tomorrow",
+        "about_cta_label": "Read Our Story",
+        "about_cta_url": "/pages/about"
+      }
+    }
+  },
+  "order": ["main"]
+}

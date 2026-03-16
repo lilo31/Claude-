@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "tagline": "Grow Something Beautiful",
+        "announcement_text": "🌱 Free shipping on orders over $50 — Use code GROW10 for 10% off your first order",
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": ["header"]
+}

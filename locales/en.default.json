@@ -1,0 +1,97 @@
+{
+  "general": {
+    "share": {
+      "success_message": "Link copied to clipboard!"
+    },
+    "search": {
+      "search": "Search",
+      "search_for": "Search for \"{terms}\"",
+      "no_results": "No results for \"{terms}\""
+    },
+    "continue_shopping": "Continue shopping"
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "refresh_page": "Refresh page",
+    "link_messages": {
+      "new_window": "Opens in a new window"
+    },
+    "images": {
+      "slideshow_pause_slideshow": "Pause slideshow"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "value_unavailable": "{{ option_value }} - Unavailable",
+      "quantity": {
+        "label": "Quantity",
+        "input_label": "Quantity for {{ product }}"
+      },
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price",
+        "unit_price": "Unit price",
+        "unit_price_separator": "per"
+      },
+      "media": {
+        "open_media": "Open media {{ index }}",
+        "open_featured_media": "Open featured media in modal",
+        "image_available": "Image {{ index }} available"
+      },
+      "add_to_cart_disabled_with_option": "{{ value }} is out of stock for this product",
+      "variant_sold_out_or_unavailable": "Sold out or unavailable"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "search": "Search",
+      "cart": "Cart"
+    },
+    "footer": {
+      "copyright": "© {{ year }} {{ shop_name }}"
+    },
+    "cart": {
+      "cart_error": "Unable to update cart. Please try again.",
+      "cart_quantity_error_html": "You can only add {{ quantity }} item(s).",
+      "title": "Your cart",
+      "empty": "Your cart is empty",
+      "continue_shopping": "Continue shopping",
+      "subtotal": "Subtotal",
+      "checkout": "Check out",
+      "item": {
+        "remove": "Remove",
+        "price": "Price",
+        "quantity": "Quantity",
+        "total": "Total"
+      }
+    },
+    "collection_template": {
+      "sort_by": "Sort by",
+      "showing": "Showing {{ count }} of {{ total }} products",
+      "sort_options": {
+        "manual": "Featured",
+        "best-selling": "Best selling",
+        "title-ascending": "Alphabetically, A-Z",
+        "title-descending": "Alphabetically, Z-A",
+        "price-ascending": "Price, low to high",
+        "price-descending": "Price, high to low",
+        "created-descending": "Date, new to old",
+        "created-ascending": "Date, old to new"
+      }
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Login",
+      "submit": "Sign In"
+    },
+    "register": {
+      "title": "Create Account",
+      "submit": "Create Account"
+    }
+  }
+}

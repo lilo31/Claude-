@@ -1,0 +1,92 @@
+{% comment %}
+  Product Card Snippet
+  Usage: {% render 'product-card', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign card_product = product
+  assign first_variant = card_product.selected_or_first_available_variant
+  assign on_sale = false
+  if first_variant.compare_at_price > first_variant.price
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  if card_product.available
+    assign sold_out = false
+  endif
+-%}
+
+<div class="product-card animate-fade-up" data-product-id="{{ card_product.id }}">
+  <div class="product-card__media">
+    <a href="{{ card_product.url }}" tabindex="-1" aria-hidden="true">
+      {%- if card_product.featured_image -%}
+        <img
+          src="{{ card_product.featured_image | image_url: width: 600 }}"
+          srcset="{{ card_product.featured_image | image_url: width: 300 }} 300w, {{ card_product.featured_image | image_url: width: 600 }} 600w"
+          sizes="(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw"
+          alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+          width="600"
+          height="600"
+          loading="lazy"
+        >
+      {%- else -%}
+        <div style="width:100%;aspect-ratio:1;background:var(--color-brand-light);display:flex;align-items:center;justify-content:center;">
+          <svg style="width:4rem;height:4rem;color:rgba(61,107,53,0.2)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+      {%- endif -%}
+    </a>
+
+    <div class="product-card__badges">
+      {%- if on_sale -%}
+        {%- assign pct = first_variant.compare_at_price | minus: first_variant.price | times: 100 | divided_by: first_variant.compare_at_price -%}
+        <span class="badge badge--sale">-{{ pct }}%</span>
+      {%- endif -%}
+      {%- if sold_out -%}
+        <span class="badge badge--sold-out">Sold Out</span>
+      {%- endif -%}
+      {%- for tag in card_product.tags -%}
+        {%- if tag == 'new' or tag == 'New' -%}
+          <span class="badge badge--new">New</span>
+        {%- elsif tag == 'organic' or tag == 'Organic' -%}
+          <span class="badge badge--organic">Organic</span>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- unless sold_out -%}
+      <button
+        class="product-card__quick-add"
+        data-quick-add="{{ card_product.variants.first.id }}"
+        aria-label="Quick add {{ card_product.title }}"
+        type="button"
+      >
+        + Quick Add
+      </button>
+    {%- endunless -%}
+  </div>
+
+  <div class="product-card__body">
+    {%- if card_product.vendor != blank -%}
+      <p class="product-card__vendor">{{ card_product.vendor }}</p>
+    {%- endif -%}
+
+    <a href="{{ card_product.url }}" class="product-card__title">{{ card_product.title }}</a>
+
+    {%- comment -%} Rating placeholder {%- endcomment -%}
+    <div class="product-card__rating" aria-label="4.8 out of 5">
+      {%- for i in (1..5) -%}
+        <svg class="product-card__star" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+      {%- endfor -%}
+      <span class="product-card__rating-count">({{ card_product.metafields.reviews.rating_count | default: '24' }})</span>
+    </div>
+
+    <div class="product-card__price">
+      {%- if on_sale -%}
+        <span class="product-card__price-sale">{{ first_variant.price | money }}</span>
+        <span class="product-card__price-compare">{{ first_variant.compare_at_price | money }}</span>
+      {%- else -%}
+        <span class="product-card__price-current">{{ first_variant.price | money }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

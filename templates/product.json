@@ -1,0 +1,67 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "highlight-1": {
+          "type": "highlight",
+          "settings": {
+            "text": "100% Certified Organic & Non-GMO"
+          }
+        },
+        "highlight-2": {
+          "type": "highlight",
+          "settings": {
+            "text": "Open-pollinated heirloom varieties"
+          }
+        },
+        "highlight-3": {
+          "type": "highlight",
+          "settings": {
+            "text": "90%+ germination rate guaranteed"
+          }
+        },
+        "highlight-4": {
+          "type": "highlight",
+          "settings": {
+            "text": "Packed in resealable seed envelopes"
+          }
+        },
+        "accordion-growing": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Growing Instructions",
+            "content": "<p>Sow seeds directly outdoors after last frost, or start indoors 6-8 weeks before transplanting. Plant 1/4 inch deep in well-draining, fertile soil. Water regularly and thin seedlings to 12 inches apart when 2 inches tall.</p>"
+          }
+        },
+        "accordion-details": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Plant Details",
+            "content": "<table><thead><tr><th>Detail</th><th>Value</th></tr></thead><tbody><tr><td>Days to Germination</td><td>7-14 days</td></tr><tr><td>Days to Maturity</td><td>55-65 days</td></tr><tr><td>Planting Depth</td><td>1/4 inch</td></tr><tr><td>Spacing</td><td>12 inches</td></tr><tr><td>Sun</td><td>Full sun</td></tr><tr><td>Hardiness Zone</td><td>3-11</td></tr></tbody></table>"
+          }
+        }
+      },
+      "block_order": [
+        "highlight-1",
+        "highlight-2",
+        "highlight-3",
+        "highlight-4",
+        "accordion-growing",
+        "accordion-details"
+      ],
+      "settings": {
+        "show_rating": true,
+        "show_stock_indicator": true,
+        "show_share": true,
+        "show_dynamic_checkout": true,
+        "show_related": true,
+        "show_sticky_atc": true,
+        "shipping_text": "<strong>Free shipping</strong> on orders over $50 — Ships within 2-3 business days",
+        "upsell_text": "Buy 3 seed packs and <strong>save 20%</strong> — add more to your cart!",
+        "shipping_policy": "We ship within 2-3 business days of your order. Free standard shipping on orders over $50. Express options available at checkout.\n\nNot satisfied? Return within 30 days for a full refund — no questions asked."
+      }
+    }
+  },
+  "order": ["main"]
+}

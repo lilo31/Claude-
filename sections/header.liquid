@@ -1,0 +1,232 @@
+{% comment %} Header Section {% endcomment %}
+
+{%- if section.settings.announcement_text != blank -%}
+<div class="header__announcement">
+  {{ section.settings.announcement_text }}
+</div>
+{%- endif -%}
+
+<header class="header" role="banner" id="shopify-section-header">
+  <div class="page-width">
+    <div class="header__inner">
+
+      {%- comment -%} Logo {%- endcomment -%}
+      <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name }}">
+        {%- if section.settings.logo != blank -%}
+          <img
+            src="{{ section.settings.logo | image_url: width: 300 }}"
+            alt="{{ shop.name }}"
+            width="{{ section.settings.logo_width }}"
+            loading="eager"
+          >
+        {%- else -%}
+          <span class="header__logo-text">{{ shop.name }}</span>
+          <span class="header__logo-tagline">{{ section.settings.tagline }}</span>
+        {%- endif -%}
+      </a>
+
+      {%- comment -%} Desktop Nav {%- endcomment -%}
+      <nav class="header__nav" role="navigation" aria-label="Main menu">
+        {%- for link in section.settings.menu.links -%}
+          <a
+            href="{{ link.url }}"
+            class="header__nav-link{% if link.active %} active{% endif %}"
+            {% if link.current %}aria-current="page"{% endif %}
+          >
+            {{ link.title }}
+          </a>
+        {%- endfor -%}
+      </nav>
+
+      {%- comment -%} Actions {%- endcomment -%}
+      <div class="header__actions">
+        {%- comment -%} Search {%- endcomment -%}
+        <button class="header__action-btn" data-search-open aria-label="Search" aria-expanded="false" aria-controls="search-modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </button>
+
+        {%- comment -%} Account {%- endcomment -%}
+        {%- if shop.customer_accounts_enabled -%}
+          <a
+            href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+            class="header__action-btn"
+            aria-label="Account"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </a>
+        {%- endif -%}
+
+        {%- comment -%} Cart {%- endcomment -%}
+        <button class="header__action-btn" data-cart-open aria-label="Cart" aria-controls="cart-drawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="header__cart-count{% if cart.item_count > 0 %} visible{% endif %}" data-cart-count>{{ cart.item_count }}</span>
+        </button>
+
+        {%- comment -%} Mobile menu button {%- endcomment -%}
+        <button class="header__menu-btn header__action-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Mobile Navigation {%- endcomment -%}
+<div class="mobile-nav-overlay" aria-hidden="true"></div>
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile menu" aria-hidden="true">
+  <div class="mobile-nav__header">
+    <a href="{{ routes.root_url }}" class="header__logo" style="text-decoration:none">
+      {%- if section.settings.logo != blank -%}
+        <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" height="40">
+      {%- else -%}
+        <span class="header__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+    <button id="mobile-nav-close" class="header__action-btn" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav__links">
+    {%- for link in section.settings.menu.links -%}
+      <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+    {%- endfor -%}
+    {%- if shop.customer_accounts_enabled -%}
+      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="mobile-nav__link">Account</a>
+    {%- endif -%}
+  </div>
+</nav>
+
+{%- comment -%} Search Modal {%- endcomment -%}
+<div class="search-modal" id="search-modal" role="dialog" aria-label="Search" aria-modal="true">
+  <div class="search-modal__overlay"></div>
+  <div class="search-modal__box">
+    <div class="search-modal__input-row">
+      <svg class="search-modal__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input
+        type="search"
+        class="search-modal__input"
+        id="search-modal-input"
+        placeholder="Search seeds, plants, accessories..."
+        autocomplete="off"
+        aria-label="Search"
+      >
+      <button class="search-modal__close" id="search-modal-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="search-modal-results" class="search-modal__results" aria-live="polite"></div>
+  </div>
+</div>
+
+{%- comment -%} Cart Drawer {%- endcomment -%}
+<div class="cart-drawer-overlay" id="cart-drawer-overlay" aria-hidden="true"></div>
+<div class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart" aria-modal="true">
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title">Your Cart</h2>
+    <button class="cart-drawer__close" id="cart-drawer-close" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cart-drawer__body" id="cart-drawer-body">
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-drawer__empty">
+        <svg class="cart-drawer__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <p>Your cart is empty</p>
+        <a href="/collections/all" class="button button--primary" style="margin-top:1.6rem">Shop Now</a>
+      </div>
+    {%- else -%}
+      {%- for item in cart.items -%}
+        <div class="cart-item" data-line="{{ item.key }}">
+          <div class="cart-item__image">
+            {%- if item.image -%}
+              <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.product.title }}" loading="lazy">
+            {%- endif -%}
+          </div>
+          <div class="cart-item__details">
+            <p class="cart-item__title">{{ item.product.title }}</p>
+            {%- unless item.product.has_only_default_variant -%}
+              <p class="cart-item__variant">{{ item.variant.title }}</p>
+            {%- endunless -%}
+            <div class="cart-item__actions">
+              <div class="quantity">
+                <button class="quantity__button" data-quantity-dec data-key="{{ item.key }}">−</button>
+                <input class="quantity__input" type="number" value="{{ item.quantity }}" min="0" data-cart-quantity data-key="{{ item.key }}" aria-label="Quantity">
+                <button class="quantity__button" data-quantity-inc data-key="{{ item.key }}">+</button>
+              </div>
+              <span class="cart-item__price">{{ item.final_line_price | money }}</span>
+              <button class="cart-item__remove" data-cart-remove data-key="{{ item.key }}">Remove</button>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+  <div class="cart-drawer__footer">
+    <div class="cart-drawer__subtotal">
+      <span class="cart-drawer__subtotal-label">Subtotal</span>
+      <span class="cart-drawer__subtotal-amount" data-cart-subtotal>{{ cart.total_price | money }}</span>
+    </div>
+    <p class="cart-drawer__note">Shipping and taxes calculated at checkout</p>
+    <a href="{{ routes.checkout_url }}" class="cart-drawer__checkout">Checkout</a>
+    <button class="cart-drawer__continue" data-cart-close>Continue Shopping</button>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "default": 160,
+      "unit": "px",
+      "label": "Logo width"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand tagline",
+      "default": "Grow Something Beautiful"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement bar text",
+      "default": "🌱 Free shipping on orders over $50 — Use code GROW10 for 10% off"
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}

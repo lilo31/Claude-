@@ -1,0 +1,20 @@
+{% comment %} Generic Page Template {% endcomment %}
+
+<div class="section page-width" style="max-width:80rem;">
+  <h1 style="font-size:3.2rem;font-weight:700;margin-bottom:2.4rem;">{{ page.title }}</h1>
+  <div class="rte" style="font-size:1.5rem;line-height:1.75;color:var(--color-text-medium);">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Page"
+    }
+  ]
+}
+{% endschema %}

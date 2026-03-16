@@ -1,0 +1,37 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop-links": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "help-links": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Help",
+            "menu": "footer"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Join the Garden",
+            "subtext": "Get growing tips, seasonal guides, and exclusive deals delivered to your inbox."
+          }
+        }
+      },
+      "block_order": ["shop-links", "help-links", "newsletter"],
+      "settings": {
+        "brand_description": "We believe everyone deserves access to fresh, organic, heirloom seeds. Grow your own food, build your garden, and connect with the earth."
+      }
+    }
+  },
+  "order": ["footer"]
+}

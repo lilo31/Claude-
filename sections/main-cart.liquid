@@ -1,0 +1,135 @@
+{% comment %} Main Cart Page {% endcomment %}
+
+<div class="section page-width">
+  <h1 style="font-size:3rem;font-weight:700;margin-bottom:3rem;">Your Cart</h1>
+
+  {%- if cart.item_count > 0 -%}
+    <div style="display:grid;grid-template-columns:1fr 34rem;gap:4rem;align-items:start;">
+      {%- comment -%} Cart items {%- endcomment -%}
+      <div>
+        <form action="{{ routes.cart_url }}" method="post" id="cart-form">
+          {%- for item in cart.items -%}
+            <div class="cart-item" style="padding:2rem 0;border-bottom:1px solid var(--color-border);">
+              <div class="cart-item__image" style="width:10rem;height:10rem;">
+                {%- if item.image -%}
+                  <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}" loading="lazy">
+                {%- endif -%}
+              </div>
+              <div class="cart-item__details" style="flex:1;">
+                <a href="{{ item.url }}" class="cart-item__title" style="font-size:1.6rem;color:var(--color-text-dark);text-decoration:none;">
+                  {{ item.product.title }}
+                </a>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="cart-item__variant">{{ item.variant.title }}</p>
+                {%- endunless -%}
+                {%- if item.selling_plan_allocation -%}
+                  <p style="font-size:1.2rem;color:var(--color-brand-primary);font-weight:600;">
+                    {{ item.selling_plan_allocation.selling_plan.name }}
+                  </p>
+                {%- endif -%}
+                <p style="font-size:1.3rem;color:var(--color-text-light);">{{ item.variant.sku }}</p>
+                <div class="cart-item__actions" style="margin-top:1.2rem;">
+                  <div class="quantity">
+                    <button class="quantity__button" type="button" onclick="this.nextElementSibling.stepDown();this.closest('form').submit()">−</button>
+                    <input
+                      class="quantity__input"
+                      type="number"
+                      name="updates[]"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      data-index="{{ forloop.index0 }}"
+                    >
+                    <button class="quantity__button" type="button" onclick="this.previousElementSibling.stepUp();this.closest('form').submit()">+</button>
+                  </div>
+                  <span class="cart-item__price" style="font-size:1.7rem;">{{ item.final_line_price | money }}</span>
+                  <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="cart-item__remove">Remove</a>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+
+          <button type="submit" name="update" class="button button--secondary" style="margin-top:1.6rem;">Update Cart</button>
+        </form>
+      </div>
+
+      {%- comment -%} Order summary {%- endcomment -%}
+      <div style="background:var(--color-bg-light);border-radius:12px;padding:2.4rem;border:1px solid var(--color-border);">
+        <h2 style="font-size:1.8rem;font-weight:700;margin-bottom:2rem;">Order Summary</h2>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
+          <span style="font-size:1.4rem;color:var(--color-text-medium);">Subtotal ({{ cart.item_count }} item{{ cart.item_count | pluralize: '', 's' }})</span>
+          <span style="font-size:1.4rem;font-weight:600;">{{ cart.total_price | money }}</span>
+        </div>
+
+        {%- if cart.total_discounts > 0 -%}
+          <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
+            <span style="font-size:1.4rem;color:var(--color-brand-accent);">Discounts</span>
+            <span style="font-size:1.4rem;color:var(--color-brand-accent);font-weight:600;">-{{ cart.total_discounts | money }}</span>
+          </div>
+        {%- endif -%}
+
+        <div style="border-top:1px solid var(--color-border);margin:1.6rem 0;padding-top:1.6rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.6rem;">
+            <span style="font-size:1.6rem;font-weight:700;">Total</span>
+            <span style="font-size:2rem;font-weight:700;">{{ cart.total_price | money }}</span>
+          </div>
+          <p style="font-size:1.2rem;color:var(--color-text-light);">Taxes and shipping calculated at checkout</p>
+        </div>
+
+        {%- comment -%} Promo code {%- endcomment -%}
+        <div style="margin-bottom:1.6rem;">
+          <label for="discount-code" style="font-size:1.3rem;font-weight:600;display:block;margin-bottom:0.6rem;">Promo Code</label>
+          <div style="display:flex;gap:0.8rem;">
+            <input type="text" id="discount-code" class="field__input" placeholder="Enter code" style="flex:1;margin:0;">
+            <button class="button button--secondary" type="button" style="padding:1.2rem 1.6rem;white-space:nowrap;">Apply</button>
+          </div>
+        </div>
+
+        <a href="{{ routes.checkout_url }}" class="button button--primary button--full-width" style="font-size:1.6rem;padding:1.8rem;">
+          Checkout →
+        </a>
+
+        <a href="/collections/all" style="display:block;text-align:center;margin-top:1.2rem;font-size:1.3rem;color:var(--color-text-light);text-decoration:underline;">
+          Continue Shopping
+        </a>
+
+        {%- comment -%} Trust icons {%- endcomment -%}
+        <div class="product__trust" style="margin-top:2rem;">
+          <div class="product__trust-item">
+            <svg class="product__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span class="product__trust-label">SSL Secure</span>
+          </div>
+          <div class="product__trust-item">
+            <svg class="product__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="product__trust-label">Easy Returns</span>
+          </div>
+          <div class="product__trust-item">
+            <svg class="product__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span class="product__trust-label">Fast Shipping</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <div style="text-align:center;padding:8rem 2rem;">
+      <svg style="width:8rem;height:8rem;margin:0 auto 2rem;color:var(--color-border)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      <h2 style="font-size:2.4rem;font-weight:700;margin-bottom:1rem;">Your cart is empty</h2>
+      <p style="font-size:1.5rem;color:var(--color-text-light);margin-bottom:2.4rem;">Add some seeds to get growing!</p>
+      <a href="/collections/all" class="button button--primary button--large">Shop Seeds</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Cart"
+    }
+  ]
+}
+{% endschema %}

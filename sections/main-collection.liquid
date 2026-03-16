@@ -1,0 +1,95 @@
+{% comment %} Collection / All Products Page {% endcomment %}
+
+<div class="section page-width">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:3rem;">
+    <div>
+      <h1 style="font-size:3rem;font-weight:700;margin:0 0 0.4rem;">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <p style="font-size:1.4rem;color:var(--color-text-light);max-width:60rem;">{{ collection.description }}</p>
+      {%- endif -%}
+      <p style="font-size:1.3rem;color:var(--color-text-light);margin-top:0.4rem;">{{ collection.products_count }} products</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <label for="sort-by" style="font-size:1.3rem;color:var(--color-text-medium);">Sort by:</label>
+      <select
+        id="sort-by"
+        class="field__select"
+        style="width:auto;padding:0.8rem 3rem 0.8rem 1rem;"
+        onchange="window.location.href = '{{ collection.url }}?sort_by=' + this.value"
+      >
+        {%- assign sort_options = 'manual,best-selling,title-ascending,title-descending,price-ascending,price-descending,created-descending' | split: ',' -%}
+        {%- assign sort_labels = 'Featured,Best Selling,Alphabetically A-Z,Alphabetically Z-A,Price Low to High,Price High to Low,Newest' | split: ',' -%}
+        {%- for option in sort_options -%}
+          <option value="{{ option }}"{% if collection.sort_by == option %} selected{% endif %}>{{ sort_labels[forloop.index0] }}</option>
+        {%- endfor -%}
+      </select>
+    </div>
+  </div>
+
+  {%- if collection.products.size > 0 -%}
+    <div class="grid grid--4-col">
+      {%- for product in collection.products -%}
+        {%- render 'product-card', product: product -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Pagination {%- endcomment -%}
+    {%- if paginate.pages > 1 -%}
+      <div style="display:flex;justify-content:center;gap:0.8rem;margin-top:4rem;flex-wrap:wrap;">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="button button--secondary">← Previous</a>
+        {%- endif -%}
+        {%- for part in paginate.parts -%}
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="button button--secondary" style="min-width:4.4rem;">{{ part.title }}</a>
+          {%- elsif part.title == '…' -%}
+            <span style="display:flex;align-items:center;padding:0 0.8rem;color:var(--color-text-light);">…</span>
+          {%- else -%}
+            <span class="button button--primary" style="min-width:4.4rem;cursor:default;">{{ part.title }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="button button--secondary">Next →</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- else -%}
+    <div style="text-align:center;padding:6rem 2rem;color:var(--color-text-light);">
+      <p style="font-size:1.8rem;">No products found in this collection.</p>
+      <a href="/collections/all" class="button button--primary" style="margin-top:2rem;">Browse All Seeds</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "options": [
+        { "value": "2", "label": "2 columns" },
+        { "value": "3", "label": "3 columns" },
+        { "value": "4", "label": "4 columns" }
+      ],
+      "default": "4",
+      "label": "Number of columns on desktop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection"
+    }
+  ]
+}
+{% endschema %}

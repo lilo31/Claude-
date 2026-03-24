@@ -1,104 +1,103 @@
-<!DOCTYPE html>
-<html lang="{{ request.locale.iso_code }}" class="no-js">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a0a0a">
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
 
-  <title>
-    {{ page_title }}
-    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
-  </title>
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
 
-  {% if page_description %}
-    <meta name="description" content="{{ page_description | escape }}">
-  {% endif %}
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
 
-  <link rel="canonical" href="{{ canonical_url }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
 
-  {{ content_for_header }}
+    {{ content_for_header }}
 
-  {{ 'theme.css' | asset_url | stylesheet_tag }}
-</head>
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
 
-<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+  <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
 
-  {% section 'announcement-bar' %}
-  {% section 'header' %}
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
 
-  <main id="main-content" role="main">
-    {{ content_for_layout }}
-  </main>
+    <main id="MainContent" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
 
-  {% section 'footer' %}
+    {% section 'footer' %}
 
-  <!-- Cart Drawer -->
-  <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
-    <div class="cart-drawer__overlay"></div>
-    <div class="cart-drawer__inner">
-      <div class="cart-drawer__header">
-        <h2 class="cart-drawer__title">Your Cart</h2>
-        <button class="cart-drawer__close" aria-label="Close cart">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="cart-drawer__body" id="cart-drawer-body">
-        <!-- Cart items loaded via JS -->
-      </div>
-      <div class="cart-drawer__footer">
-        <div class="cart-drawer__subtotal">
-          <span>Subtotal</span>
-          <span id="cart-subtotal">{{ cart.total_price | money }}</span>
+    <!-- Cart Drawer -->
+    <div id="CartDrawer" class="cart-drawer" aria-hidden="true">
+      <div class="cart-drawer__overlay" onclick="closeCartDrawer()"></div>
+      <div class="cart-drawer__container">
+        <div class="cart-drawer__header">
+          <h2 class="cart-drawer__title">Winkelwagen</h2>
+          <button class="cart-drawer__close" onclick="closeCartDrawer()" aria-label="Sluit winkelwagen">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
-        <p class="cart-drawer__note">Shipping and taxes calculated at checkout</p>
-        <a href="/checkout" class="btn btn--primary btn--full">Checkout</a>
-        <a href="/cart" class="btn btn--outline btn--full">View Cart</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
-    <div class="mobile-menu__overlay"></div>
-    <div class="mobile-menu__inner">
-      <div class="mobile-menu__header">
-        <a href="/" class="mobile-menu__logo">{{ shop.name }}</a>
-        <button class="mobile-menu__close" aria-label="Close menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <nav class="mobile-menu__nav">
-        {% for link in linklists.main-menu.links %}
-          <div class="mobile-menu__item{% if link.links.size > 0 %} mobile-menu__item--has-children{% endif %}">
-            <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
-            {% if link.links.size > 0 %}
-              <div class="mobile-menu__dropdown">
-                {% for child in link.links %}
-                  <a href="{{ child.url }}" class="mobile-menu__sub-link">{{ child.title }}</a>
-                {% endfor %}
-              </div>
-            {% endif %}
+        <div class="cart-drawer__body" id="CartDrawerBody">
+          <div class="cart-drawer__loading">Laden...</div>
+        </div>
+        <div class="cart-drawer__footer" id="CartDrawerFooter" style="display:none">
+          <div class="cart-drawer__subtotal">
+            <span>Subtotaal</span>
+            <span id="CartDrawerTotal"></span>
           </div>
-        {% endfor %}
-      </nav>
-      <div class="mobile-menu__footer">
-        <a href="/account" class="mobile-menu__account">Account</a>
+          <p class="cart-drawer__shipping-note">Verzendkosten worden berekend bij checkout</p>
+          <a href="/checkout" class="btn btn--primary btn--full">Afrekenen</a>
+          <a href="/cart" class="btn btn--outline btn--full" style="margin-top:8px">Winkelwagen bekijken</a>
+        </div>
       </div>
     </div>
-  </div>
 
-  {{ 'theme.js' | asset_url | script_tag }}
-</body>
+    <!-- Search Modal -->
+    <div id="SearchModal" class="search-modal" aria-hidden="true">
+      <div class="search-modal__overlay" onclick="closeSearch()"></div>
+      <div class="search-modal__container">
+        <form action="/search" method="get" class="search-modal__form">
+          <input type="hidden" name="type" value="product">
+          <div class="search-modal__input-wrapper">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="search-modal__icon">
+              <path d="M17.5 17.5l-4.167-4.167M14.167 8.333A5.833 5.833 0 1 1 2.5 8.333a5.833 5.833 0 0 1 11.667 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="search" name="q" placeholder="Zoek naar producten, merken..." class="search-modal__input" autofocus>
+            <button type="button" class="search-modal__close" onclick="closeSearch()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div class="search-modal__suggestions">
+          <p class="search-modal__suggestions-title">Populaire zoekopdrachten</p>
+          <div class="search-modal__tags">
+            <a href="/search?type=product&q=kookpan" class="search-tag">Kookpan</a>
+            <a href="/search?type=product&q=koekenpan" class="search-tag">Koekenpan</a>
+            <a href="/search?type=product&q=mes" class="search-tag">Mes</a>
+            <a href="/search?type=product&q=staafmixer" class="search-tag">Staafmixer</a>
+            <a href="/search?type=product&q=koffiemachine" class="search-tag">Koffiemachine</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{ 'theme.js' | asset_url | script_tag }}
+  </body>
 </html>

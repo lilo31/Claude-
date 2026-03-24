@@ -1,0 +1,87 @@
+{
+  "general": {
+    "search": {
+      "search": "Zoeken",
+      "placeholder": "Zoek producten...",
+      "no_results": "Geen resultaten gevonden voor"
+    },
+    "cart": {
+      "title": "Winkelwagen",
+      "empty": "Uw winkelwagen is leeg",
+      "subtotal": "Subtotaal",
+      "checkout": "Afrekenen",
+      "add": "In winkelwagen",
+      "update": "Bijwerken",
+      "remove": "Verwijderen",
+      "note": "Notitie",
+      "items_count": { "one": "{{ count }} artikel", "other": "{{ count }} artikelen" }
+    },
+    "accessibility": {
+      "skip_content": "Ga naar inhoud",
+      "close_modal": "Sluit venster",
+      "open_menu": "Open menu"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "In winkelwagen",
+      "sold_out": "Uitverkocht",
+      "unavailable": "Niet beschikbaar",
+      "on_sale": "Sale",
+      "from": "Vanaf",
+      "unit_price": "Eenheidsprijs",
+      "quantity": "Aantal",
+      "sku": "Artikelnummer",
+      "vendor": "Merk",
+      "description": "Beschrijving",
+      "reviews": "Beoordelingen"
+    },
+    "facets": {
+      "sort_by": "Sorteren op",
+      "filter_by": "Filteren op",
+      "clear_all": "Alles wissen",
+      "results_count": { "one": "{{ count }} resultaat", "other": "{{ count }} resultaten" }
+    }
+  },
+  "collections": {
+    "title": "Collecties",
+    "all": "Alle producten"
+  },
+  "blogs": {
+    "article": {
+      "read_more": "Lees meer",
+      "by_author": "Door {{ author }}"
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Inloggen",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "submit": "Inloggen",
+      "forgot_password": "Wachtwoord vergeten?",
+      "no_account": "Nog geen account?"
+    },
+    "register": {
+      "title": "Account aanmaken",
+      "submit": "Registreren",
+      "have_account": "Al een account?"
+    },
+    "account": {
+      "title": "Mijn account",
+      "orders": "Bestellingen",
+      "details": "Accountgegevens",
+      "logout": "Uitloggen"
+    }
+  },
+  "newsletter": {
+    "label": "E-mailadres",
+    "placeholder": "Uw e-mailadres",
+    "submit": "Aanmelden",
+    "success": "Bedankt voor uw aanmelding!"
+  },
+  "pagination": {
+    "previous": "Vorige",
+    "next": "Volgende"
+  }
+}

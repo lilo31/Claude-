@@ -1,10 +1,19 @@
 {
   "current": {
-    "color_accent": "#c9a96e",
-    "color_bg": "#0a0a0a",
-    "color_text": "#f0ede8",
-    "font_size_base": 16,
-    "layout_max_width": 1400,
-    "cart_type": "drawer"
-  }
+    "color_primary": "#E31E24",
+    "color_primary_hover": "#C41A1F",
+    "color_secondary": "#1A1A2E",
+    "color_text": "#1A1A1A",
+    "color_text_light": "#666666",
+    "color_border": "#E5E5E5",
+    "color_background": "#FFFFFF",
+    "color_background_secondary": "#F5F5F5",
+    "logo_text": "Leumx",
+    "logo_width": 160,
+    "cart_type": "drawer",
+    "product_card_show_vendor": true,
+    "product_card_show_rating": true,
+    "product_card_show_quick_add": true
+  },
+  "presets": {}
 }

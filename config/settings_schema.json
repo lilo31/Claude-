@@ -1,114 +1,104 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Revive",
+    "theme_name": "Leumx",
     "theme_version": "1.0.0",
-    "theme_author": "Revive Theme",
+    "theme_author": "Leumx",
     "theme_documentation_url": "",
     "theme_support_url": ""
   },
   {
-    "name": "Colors",
+    "name": "Kleuren",
     "settings": [
       {
-        "type": "header",
-        "content": "Brand Colors"
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primaire kleur",
+        "default": "#E31E24"
       },
       {
         "type": "color",
-        "id": "color_accent",
-        "label": "Accent color",
-        "default": "#c9a96e",
-        "info": "Used for highlights, buttons, and key elements"
+        "id": "color_primary_hover",
+        "label": "Primaire kleur (hover)",
+        "default": "#C41A1F"
       },
       {
         "type": "color",
-        "id": "color_bg",
-        "label": "Background color",
-        "default": "#0a0a0a"
+        "id": "color_secondary",
+        "label": "Secundaire kleur",
+        "default": "#1A1A2E"
       },
       {
         "type": "color",
         "id": "color_text",
-        "label": "Text color",
-        "default": "#f0ede8"
+        "label": "Tekstkleur",
+        "default": "#1A1A1A"
+      },
+      {
+        "type": "color",
+        "id": "color_text_light",
+        "label": "Lichte tekstkleur",
+        "default": "#666666"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Randkleur",
+        "default": "#E5E5E5"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Achtergrondkleur",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_background_secondary",
+        "label": "Secundaire achtergrond",
+        "default": "#F5F5F5"
       }
     ]
   },
   {
-    "name": "Typography",
+    "name": "Typografie",
     "settings": [
-      {
-        "type": "font_picker",
-        "id": "font_heading",
-        "label": "Heading font",
-        "default": "cormorant_garamond_n4"
-      },
       {
         "type": "font_picker",
         "id": "font_body",
-        "label": "Body font",
-        "default": "jost_n3"
+        "label": "Bodytekst lettertype",
+        "default": "inter_n4"
       },
       {
-        "type": "range",
-        "id": "font_size_base",
-        "label": "Base font size",
-        "min": 14,
-        "max": 20,
-        "step": 1,
-        "default": 16,
-        "unit": "px"
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading lettertype",
+        "default": "inter_n7"
       }
     ]
   },
   {
-    "name": "Layout",
+    "name": "Logo",
     "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo afbeelding"
+      },
       {
         "type": "range",
-        "id": "layout_max_width",
-        "label": "Max content width",
-        "min": 1000,
-        "max": 1600,
-        "step": 50,
-        "default": 1400,
-        "unit": "px"
-      }
-    ]
-  },
-  {
-    "name": "Social Media",
-    "settings": [
-      {
-        "type": "url",
-        "id": "social_instagram",
-        "label": "Instagram URL"
+        "id": "logo_width",
+        "label": "Logo breedte (px)",
+        "min": 80,
+        "max": 300,
+        "step": 10,
+        "default": 160
       },
       {
-        "type": "url",
-        "id": "social_facebook",
-        "label": "Facebook URL"
-      },
-      {
-        "type": "url",
-        "id": "social_twitter",
-        "label": "Twitter / X URL"
-      },
-      {
-        "type": "url",
-        "id": "social_pinterest",
-        "label": "Pinterest URL"
-      },
-      {
-        "type": "url",
-        "id": "social_tiktok",
-        "label": "TikTok URL"
-      },
-      {
-        "type": "url",
-        "id": "social_youtube",
-        "label": "YouTube URL"
+        "type": "text",
+        "id": "logo_text",
+        "label": "Logo tekst (als geen afbeelding)",
+        "default": "Leumx"
       }
     ]
   },
@@ -118,23 +108,45 @@
       {
         "type": "image_picker",
         "id": "favicon",
-        "label": "Favicon image",
-        "info": "Recommended: 32x32px .ico or .png"
+        "label": "Favicon"
       }
     ]
   },
   {
-    "name": "Cart",
+    "name": "Winkelwagen",
     "settings": [
       {
         "type": "select",
         "id": "cart_type",
-        "label": "Cart type",
+        "label": "Winkelwagen type",
         "options": [
-          { "value": "drawer", "label": "Drawer (slide-in)" },
-          { "value": "page", "label": "Cart page" }
+          { "value": "drawer", "label": "Zijpaneel" },
+          { "value": "page", "label": "Pagina" }
         ],
         "default": "drawer"
+      }
+    ]
+  },
+  {
+    "name": "Productkaart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "product_card_show_vendor",
+        "label": "Toon merk",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_show_rating",
+        "label": "Toon beoordeling",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_show_quick_add",
+        "label": "Toon snelle toevoeging",
+        "default": true
       }
     ]
   }

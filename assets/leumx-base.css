@@ -92,6 +92,28 @@
   cursor: pointer;
 }
 .lx-btn:hover { background: var(--lx-gold-bright); border-color: var(--lx-gold-bright); }
+.lx-btn:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 3px; }
+
+/* Global keyboard focus — gold outline on every interactive control.
+   Individual sections may refine, but this guarantees a visible baseline. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--lx-gold);
+  outline-offset: 2px;
+}
+
+/* Screen-reader-only utility: label exists for AT but is not displayed. */
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px; block-size: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
 
 .lx-btn--ghost {
   --btn-bg: transparent;

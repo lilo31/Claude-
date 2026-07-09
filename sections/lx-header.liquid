@@ -49,30 +49,24 @@
       </nav>
     {%- endif -%}
 
-    {%- comment -%} Logo / wordmark (center or start) {%- endcomment -%}
+    {%- comment -%}
+      Logo / wordmark. Kept as a <div> (not <h1>) so each page has exactly one
+      h1 from its main content — on the homepage that is the hero heading.
+    {%- endcomment -%}
     <div class="lx-header__brand">
-      {%- if request.page_type == 'index' -%}
-        <h1 class="lx-header__logo">
-      {%- else -%}
-        <div class="lx-header__logo">
-      {%- endif -%}
-        <a href="{{ routes.root_url }}" class="lx-header__logo-link">
-          {%- if section.settings.logo != blank -%}
-            {{ section.settings.logo | image_url: width: 480 | image_tag:
-               loading: 'eager', class: 'lx-header__logo-img',
-               widths: '120,180,240,360,480',
-               sizes: '(max-width: 749px) 140px, 200px',
-               alt: shop.name,
-               style: 'max-block-size: ' | append: section.settings.logo_height | append: 'px;' }}
-          {%- else -%}
-            <span class="lx-header__wordmark lx-display">{{ shop.name }}</span>
-          {%- endif -%}
-        </a>
-      {%- if request.page_type == 'index' -%}
-        </h1>
-      {%- else -%}
-        </div>
-      {%- endif -%}
+      <a href="{{ routes.root_url }}" class="lx-header__logo-link"
+         aria-label="{{ shop.name }} — {{ 'general.home' | t | default: 'home' }}">
+        {%- if section.settings.logo != blank -%}
+          {{ section.settings.logo | image_url: width: 480 | image_tag:
+             loading: 'eager', class: 'lx-header__logo-img',
+             widths: '120,180,240,360,480',
+             sizes: '(max-width: 749px) 140px, 200px',
+             alt: shop.name,
+             style: 'max-block-size: ' | append: section.settings.logo_height | append: 'px;' }}
+        {%- else -%}
+          <span class="lx-header__wordmark lx-display">{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
     </div>
 
     {%- comment -%} Actions: language, search, account, cart {%- endcomment -%}
@@ -302,49 +296,6 @@
   }
 </style>
 
-<script>
-  (function () {
-    var roots = document.querySelectorAll('lx-header');
-    roots.forEach(function (root) {
-      // Sticky solid-on-scroll
-      if (root.getAttribute('data-sticky') === 'true' && !root.classList.contains('is-solid')) {
-        var onScroll = function () {
-          root.classList.toggle('is-scrolled', window.scrollY > 24);
-        };
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
-      }
-
-      // Mobile drawer
-      var burger = root.querySelector('.lx-header__burger');
-      var drawer = root.querySelector('.lx-header__drawer');
-      if (burger && drawer) {
-        burger.addEventListener('click', function () {
-          var open = burger.getAttribute('aria-expanded') === 'true';
-          burger.setAttribute('aria-expanded', String(!open));
-          drawer.hidden = open;
-        });
-      }
-
-      // Language dropdown
-      var langToggle = root.querySelector('.lx-lang__toggle');
-      var langList = root.querySelector('.lx-lang__list');
-      if (langToggle && langList) {
-        langToggle.addEventListener('click', function () {
-          var open = langToggle.getAttribute('aria-expanded') === 'true';
-          langToggle.setAttribute('aria-expanded', String(!open));
-          langList.hidden = open;
-        });
-        document.addEventListener('click', function (e) {
-          if (!root.contains(e.target)) { langToggle.setAttribute('aria-expanded', 'false'); langList.hidden = true; }
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape') { langToggle.setAttribute('aria-expanded', 'false'); langList.hidden = true; }
-        });
-      }
-    });
-  })();
-</script>
 
 {% schema %}
 {

@@ -274,7 +274,6 @@
       "announcement": "Announcement",
       "announcement_bar": "Announcement bar"
     },
-
     "header": {
       "announcement": "Announcement",
       "menu": "Menu",
@@ -528,6 +527,22 @@
       "max_characters": "{{ max_chars }} characters max",
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
+    }
+  },
+  "leumx": {
+    "product": {
+      "view_image": "View image {{ number }}",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity"
+    },
+    "b2b": {
+      "company_placeholder": "Company / name",
+      "email_placeholder": "Work email",
+      "message_placeholder": "Tell us about your business"
+    },
+    "editor": {
+      "choose_collection": "Pick a collection in the theme editor to show products here.",
+      "add_tiles": "Add tiles in the theme editor to feature your collections."
     }
   }
 }

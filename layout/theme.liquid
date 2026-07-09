@@ -63,6 +63,7 @@
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'standard-actions-override.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'leumx.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
@@ -285,6 +286,31 @@
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'leumx-base.css' | asset_url | stylesheet_tag }}
+
+    {%- comment -%} Leumx Brand settings → override the leumx-base.css tokens. {%- endcomment -%}
+    {%- if settings.lx_use_font_pickers -%}
+      {{ settings.lx_font_display | font_face: font_display: 'swap' }}
+      {{ settings.lx_font_body | font_face: font_display: 'swap' }}
+    {%- endif -%}
+    {% style %}
+      :root {
+        --lx-navy: {{ settings.lx_navy }};
+        --lx-navy-deep: {{ settings.lx_navy_deep }};
+        --lx-navy-soft: {{ settings.lx_navy_soft }};
+        --lx-gold: {{ settings.lx_gold }};
+        --lx-gold-bright: {{ settings.lx_gold_bright }};
+        --lx-cream: {{ settings.lx_cream }};
+        --lx-paper: {{ settings.lx_paper }};
+        --lx-ink: {{ settings.lx_ink }};
+        --lx-ink-soft: {{ settings.lx_ink_soft }};
+        --lx-line: {{ settings.lx_line }};
+        {%- if settings.lx_use_font_pickers %}
+        --lx-display: {{ settings.lx_font_display.family }}, {{ settings.lx_font_display.fallback_families }}, "Fraunces", Georgia, serif;
+        --lx-body: {{ settings.lx_font_body.family }}, {{ settings.lx_font_body.fallback_families }}, "Inter", sans-serif;
+        {%- endif %}
+      }
+    {% endstyle %}
+
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
     {%- if settings.cart_type == 'drawer' -%}

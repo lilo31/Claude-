@@ -1,11 +1,110 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Dawn",
+    "theme_name": "Leumx",
     "theme_version": "15.5.0",
-    "theme_author": "Shopify",
+    "theme_author": "Leumx",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
     "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Leumx Brand",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand colours"
+      },
+      {
+        "type": "paragraph",
+        "content": "These drive the Leumx CSS variables used across all lx- sections. Leave as-is to keep the signature navy + gold identity."
+      },
+      {
+        "type": "color",
+        "id": "lx_navy",
+        "label": "Navy (primary surface)",
+        "default": "#0E1D33"
+      },
+      {
+        "type": "color",
+        "id": "lx_navy_deep",
+        "label": "Deep navy (footer / overlays)",
+        "default": "#0A1526"
+      },
+      {
+        "type": "color",
+        "id": "lx_navy_soft",
+        "label": "Soft navy (raised cards)",
+        "default": "#16294A"
+      },
+      {
+        "type": "color",
+        "id": "lx_gold",
+        "label": "Gold (accent / CTA)",
+        "default": "#C39A4E"
+      },
+      {
+        "type": "color",
+        "id": "lx_gold_bright",
+        "label": "Gold bright (hover)",
+        "default": "#D8B368"
+      },
+      {
+        "type": "color",
+        "id": "lx_cream",
+        "label": "Cream (light surface)",
+        "default": "#F6F3EC"
+      },
+      {
+        "type": "color",
+        "id": "lx_paper",
+        "label": "Paper (page background)",
+        "default": "#FCFBF8"
+      },
+      {
+        "type": "color",
+        "id": "lx_ink",
+        "label": "Ink (body text on light)",
+        "default": "#1B2431"
+      },
+      {
+        "type": "color",
+        "id": "lx_ink_soft",
+        "label": "Ink soft (secondary text)",
+        "default": "#55606E"
+      },
+      {
+        "type": "color",
+        "id": "lx_line",
+        "label": "Line (dividers on light)",
+        "default": "#E4DED2"
+      },
+      {
+        "type": "header",
+        "content": "Brand typography"
+      },
+      {
+        "type": "paragraph",
+        "content": "Optional overrides. The theme ships Fraunces (display) + Inter (body) via web fonts; a picked font here takes precedence and keeps those as fallback."
+      },
+      {
+        "type": "font_picker",
+        "id": "lx_font_display",
+        "label": "Display font",
+        "default": "playfair_display_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "lx_font_body",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "lx_use_font_pickers",
+        "label": "Use the fonts picked above (off = keep Fraunces / Inter)",
+        "default": false
+      }
+    ]
   },
   {
     "name": "t:settings_schema.logo.name",

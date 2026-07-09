@@ -10,7 +10,10 @@
   assign current = product.selected_or_first_available_variant
 -%}
 
-<section class="lx-pdp" data-lx-product>
+<section class="lx-pdp" data-lx-product
+  data-money-format="{{ shop.money_format | escape }}"
+  data-i18n-add="{{ 'products.product.add_to_cart' | t | default: 'Add to cart' | escape }}"
+  data-i18n-sold="{{ 'products.product.sold_out' | t | default: 'Sold out' | escape }}">
   <div class="lx-wrap lx-pdp__grid">
 
     {%- comment -%} ============ Gallery ============ {%- endcomment -%}
@@ -18,11 +21,19 @@
       <div class="lx-pdp__stage">
         {%- if product.media.size > 0 -%}
           {%- for media in product.media -%}
+            {%- liquid
+              assign media_loading = 'lazy'
+              assign media_fetchpriority = 'auto'
+              if forloop.first
+                assign media_loading = 'eager'
+                assign media_fetchpriority = 'high'
+              endif
+            -%}
             <div class="lx-pdp__slide{% if forloop.first %} is-active{% endif %}"
                  data-media-id="{{ media.id }}" {% unless forloop.first %}hidden{% endunless %}>
               {%- if media.media_type == 'image' -%}
                 {{ media | image_url: width: 1400 | image_tag:
-                   loading: forloop.first | default: false, class: 'lx-pdp__img',
+                   loading: media_loading, fetchpriority: media_fetchpriority, class: 'lx-pdp__img',
                    widths: '400,600,800,1000,1400',
                    sizes: '(min-width: 990px) 55vw, 100vw',
                    alt: media.alt | escape }}
@@ -41,7 +52,7 @@
           {%- for media in product.media -%}
             <li>
               <button type="button" class="lx-pdp__thumb{% if forloop.first %} is-active{% endif %}"
-                      data-thumb="{{ media.id }}" aria-label="View image {{ forloop.index }}">
+                      data-thumb="{{ media.id }}" aria-label="{{ 'leumx.product.view_image' | t: number: forloop.index }}">
                 {{ media.preview_image | image_url: width: 200 | image_tag:
                    loading: 'lazy', widths: '100,160,200', sizes: '80px', alt: media.alt | escape }}
               </button>
@@ -103,9 +114,9 @@
 
           <div class="lx-pdp__buy">
             <div class="lx-qty" data-lx-qty>
-              <button type="button" class="lx-qty__btn" data-qty-down aria-label="Decrease quantity">{%- render 'lx-icon', icon: 'minus' -%}</button>
-              <input type="number" class="lx-qty__input" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity">
-              <button type="button" class="lx-qty__btn" data-qty-up aria-label="Increase quantity">{%- render 'lx-icon', icon: 'plus' -%}</button>
+              <button type="button" class="lx-qty__btn" data-qty-down aria-label="{{ 'leumx.product.decrease_quantity' | t }}">{%- render 'lx-icon', icon: 'minus' -%}</button>
+              <input type="number" class="lx-qty__input" name="quantity" value="1" min="1" inputmode="numeric" aria-label="{{ 'products.product.quantity.input_label' | t | default: 'Quantity' }}">
+              <button type="button" class="lx-qty__btn" data-qty-up aria-label="{{ 'leumx.product.increase_quantity' | t }}">{%- render 'lx-icon', icon: 'plus' -%}</button>
             </div>
 
             <button type="submit" name="add" class="lx-btn lx-pdp__add"
@@ -236,92 +247,6 @@
   .lx-spec td { color: var(--lx-ink); }
 </style>
 
-<script>
-  (function () {
-    var root = document.querySelector('[data-lx-product]');
-    if (!root) return;
-
-    /* ---- Gallery swap ---- */
-    var thumbs = root.querySelectorAll('[data-thumb]');
-    var slides = root.querySelectorAll('.lx-pdp__slide');
-    function showMedia(id) {
-      slides.forEach(function (s) {
-        var on = s.getAttribute('data-media-id') === String(id);
-        s.hidden = !on; s.classList.toggle('is-active', on);
-      });
-      thumbs.forEach(function (t) {
-        t.classList.toggle('is-active', t.getAttribute('data-thumb') === String(id));
-      });
-    }
-    thumbs.forEach(function (t) {
-      t.addEventListener('click', function () { showMedia(t.getAttribute('data-thumb')); });
-    });
-
-    /* ---- Quantity ---- */
-    var qtyInput = root.querySelector('.lx-qty__input');
-    if (qtyInput) {
-      root.querySelector('[data-qty-down]').addEventListener('click', function () {
-        qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
-      });
-      root.querySelector('[data-qty-up]').addEventListener('click', function () {
-        qtyInput.value = (parseInt(qtyInput.value, 10) || 1) + 1;
-      });
-    }
-
-    /* ---- Variant picker ---- */
-    var dataEl = root.querySelector('[data-lx-variants]');
-    var variants = dataEl ? JSON.parse(dataEl.textContent) : [];
-    var select = root.querySelector('[data-lx-variant-select]');
-    var optionInputs = root.querySelectorAll('.lx-opt__input');
-    var priceEl = root.querySelector('[data-lx-price]');
-    var addBtn = root.querySelector('[data-lx-add]');
-    var addText = root.querySelector('[data-add-text]');
-    var moneyFormat = {{ shop.money_format | json }};
-
-    function selectedOptions() {
-      var opts = [];
-      root.querySelectorAll('.lx-opt').forEach(function (fs) {
-        var checked = fs.querySelector('.lx-opt__input:checked');
-        if (checked) opts.push(checked.value);
-      });
-      return opts;
-    }
-    function matchVariant(opts) {
-      return variants.find(function (v) {
-        return (v.options || []).every(function (o, i) { return o === opts[i]; });
-      });
-    }
-    function formatMoney(cents) {
-      var v = (cents / 100).toFixed(2);
-      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/, v).replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100));
-    }
-    function update() {
-      if (!optionInputs.length) return;
-      var opts = selectedOptions();
-      var v = matchVariant(opts);
-      if (!v) return;
-      if (select) select.value = v.id;
-      if (priceEl) {
-        var html = formatMoney(v.price);
-        if (v.compare_at_price && v.compare_at_price > v.price) {
-          html = '<span class="lx-price__now">' + formatMoney(v.price) + '</span>' +
-                 ' <s class="lx-price__was">' + formatMoney(v.compare_at_price) + '</s>';
-        }
-        priceEl.innerHTML = html;
-      }
-      if (addBtn && addText) {
-        addBtn.disabled = !v.available;
-        addText.textContent = v.available ? {{ 'products.product.add_to_cart' | t | json }} : {{ 'products.product.sold_out' | t | json }};
-      }
-      if (history.replaceState) {
-        var url = new URL(window.location.href);
-        url.searchParams.set('variant', v.id);
-        history.replaceState({}, '', url);
-      }
-    }
-    optionInputs.forEach(function (inp) { inp.addEventListener('change', update); });
-  })();
-</script>
 
 {% schema %}
 {

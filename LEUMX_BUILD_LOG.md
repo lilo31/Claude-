@@ -1,5 +1,68 @@
 # Leumx theme — build log
 
+---
+
+## ☀️ MORNING CHECKLIST — what you need to do
+
+Everything below is code-complete and verified. These are the things only *you*
+can provide. Roughly in order:
+
+### 1. Upload brand assets (Theme editor → each section)
+- [ ] **Logo** — Header section + Footer section. Until then a Fraunces wordmark
+      of your shop name shows.
+      - Format: **SVG preferred** (crisp at any size), or transparent PNG @ ~2× the
+        display height. Header display height is adjustable (24–80px, default 40px);
+        so supply a PNG **≥ 160px tall**. Footer default 36px → PNG ≥ 144px tall.
+- [ ] **Hero image** (`Leumx Hero`) — landscape, **2400px wide**, high quality. Text
+      sits over a navy scrim on the inline-start side, so keep the left third
+      (right third in Arabic) relatively clean.
+- [ ] **Category tiles** (`Leumx Categories`) — one image per tile, portrait
+      **~1200 × 1500px** (4:5). A "wide" tile crops to 16:10, so supply landscape for
+      any tile you mark wide.
+- [ ] **Story image** (`Leumx Story`) — **~1400px wide**; fills half the split on
+      desktop (min-height 60vh), so a portrait-ish or square crop reads best.
+- [ ] **Newsletter/B2B background** (optional) — **2000px wide**; it sits under a
+      heavy navy scrim, so almost any dark-ish photo works.
+- [ ] **Product images** — uploaded per product as usual; the gallery + thumbnails
+      are automatic. First image is treated as the LCP image.
+
+### 2. Fonts (optional — currently working)
+- Fraunces (display) + Inter (body) already load from Google Fonts; Noto Naskh/Kufi
+  for Arabic. Nothing required to launch.
+- If you have **licensed brand fonts**, say so and I'll self-host them and drop the
+  Google `<link>`. Or, in **Theme settings → Leumx Brand**, tick *"Use the fonts
+  picked above"* and choose from Shopify's font library.
+
+### 3. Navigation (Online store → Navigation)
+- [ ] Create/confirm a **`main-menu`** link list → drives the header nav.
+- [ ] Create/confirm a **`footer`** link list → drives the footer columns.
+
+### 4. Collections (Products → Collections, then Theme editor)
+- [ ] Create collections e.g. **Kitchenware, Cookware, Electric, Home**.
+- [ ] Point each **Category tile** at its collection (tile image/title/link fall back
+      to the collection's own if left blank).
+- [ ] Point **`Leumx Collection`** (featured grid on the homepage) at a collection.
+
+### 5. Brand colours (optional)
+- **Theme settings → Leumx Brand** exposes every navy/gold/cream token as a colour
+  picker, wired live to the CSS variables. Tweak without touching code.
+
+### 6. Bilingual / Arabic (optional)
+- The EN/AR switch appears automatically once you publish **Arabic** in
+  *Settings → Languages*. RTL styling + a partial Arabic locale (`locales/ar.json`)
+  are already in place; untranslated strings fall back to English.
+
+### 7. Preview the theme live
+1. Install the Shopify CLI: `npm i -g @shopify/cli @shopify/theme`.
+2. From the repo root: `shopify theme dev --store your-store.myshopify.com`
+   → opens a local preview with hot reload against your store's data.
+3. Or in admin: **Online Store → Themes → Add theme → Connect from GitHub**
+   (branch `claude/leumx-shopify-theme-vpb4mr`), then **Preview**.
+4. Run `shopify theme check` for Shopify's own linter (couldn't run in the build
+   environment — no store/binary; our static + browser checks all pass).
+
+---
+
 Original Shopify theme for **Leumx®** (homeware/cookware), built on **Dawn 15.5.0**.
 All sections follow `LEUMX_THEME_BUILD_BRIEF.md`: navy-dominant + warm gold, Fraunces
 (display) / Inter (body), nearly-square 2px corners, gold hairline eyebrows, gold
@@ -69,3 +132,57 @@ code, markup, or assets were used — patterns are expressed in the Leumx identi
 - **Language**: EN/AR switch appears automatically once a second (Arabic) language is
   published in Shopify Markets/Languages. RTL styling is already in place.
 - **Collections**: point the category tiles and featured collection at real collections.
+
+## Polish & hardening pass (post-scaffold)
+
+Autonomous pass over the whole theme. Verified with `scripts/validate_liquid.py`
+plus a headless-Chromium harness (`scratchpad/`, not shipped) that renders every
+section's real CSS with representative markup.
+
+**Accessibility**
+- Centralised gold `:focus-visible` outline for all links/buttons/inputs/selects
+  and `.lx-btn`, plus a `.visually-hidden` utility — in `leumx-base.css`.
+- Header logo changed from `<h1>` to a `<div>` so every page has exactly **one h1**
+  (homepage → hero; product → product title). Added an `aria-label` to the logo link.
+- Added explicit `alt` fallbacks to every content image (hero, story, collection,
+  category); newsletter background image is decorative → `alt=""`.
+- Icon-only controls already carry aria-labels (cart, search, account, menu,
+  qty ±, gallery thumbs).
+
+**RTL**
+- Full sweep: **zero** hardcoded left/right; all spacing uses logical properties.
+- Confirmed mirrors for the hero/newsletter scrims (90°↔270°), card & category
+  underline reveals (`background-position`), header link underline and dropdowns
+  (logical `inset`), and footer submit arrow (`scaleX(-1)`).
+- Wrapped the two literal `→` glyphs (collection "View all", category CTA) in
+  `.lx-arrow` and flip them under `[dir="rtl"]`.
+
+**Responsive** — headless Chromium at **375 / 768 / 990 / 1440**, LTR *and* RTL:
+no horizontal overflow anywhere. Mobile drawer, sticky buy box, and all grids
+behave (2→3/4-up collection & category, 1→2-col product, stacked→2-col newsletter).
+
+**Copy / i18n**
+- Premium EN copy lives in schema defaults (shows before merchant edits).
+- Added a `leumx` namespace to `locales/en.default.json`; created a partial
+  **`locales/ar.json`** (Arabic) covering the Leumx UI strings + the header/product
+  keys the sections reference. Wired product gallery/qty aria, B2B form placeholders,
+  and editor empty-states through `| t`. Untranslated keys fall back to English
+  (Shopify locale merge). *Decision:* a full Arabic storefront translation is out of
+  scope for tonight — only Leumx-relevant strings are translated.
+
+**Performance**
+- Fixed a real bug: product first image emitted `loading="true"` (invalid) — now
+  `eager`/`lazy` with `fetchpriority` on the first slide; hero already `eager` +
+  `fetchpriority:high`. All other images `lazy`.
+- No raw `<img>` — every image uses `image_tag`, which emits width/height (no CLS).
+- Externalised the header + product inline scripts into one deferred
+  `assets/leumx.js`; Liquid-dependent values (money format, add/sold labels) now
+  pass via `data-*` attributes. Verified the variant picker end-to-end in a real
+  browser (price + sale strikethrough, hidden select, sold-out state).
+- Confirmed `leumx-base.css` and `leumx.js` each load exactly once.
+
+**Brand settings**
+- Added a **Leumx Brand** group to `config/settings_schema.json`: colour pickers for
+  every navy/gold/cream token + two font pickers, wired to the `--lx-*` CSS variables
+  via a `{% style %}` override in `layout/theme.liquid`. Renamed theme identity to
+  "Leumx". Fonts default to Fraunces/Inter unless the "use font pickers" toggle is on.

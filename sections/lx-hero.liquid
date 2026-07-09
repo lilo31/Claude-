@@ -8,7 +8,9 @@
   {%- if section.settings.image != blank -%}
     <div class="lx-hero__media">
       {{ section.settings.image | image_url: width: 2400 | image_tag:
-         loading: 'eager', sizes: '100vw', class: 'lx-hero__img' }}
+         loading: 'eager', fetchpriority: 'high', sizes: '100vw',
+         widths: '600,900,1200,1600,2000,2400', class: 'lx-hero__img',
+         alt: section.settings.image.alt | default: section.settings.heading | default: shop.name | escape }}
       <div class="lx-hero__scrim"></div>
     </div>
   {%- endif -%}

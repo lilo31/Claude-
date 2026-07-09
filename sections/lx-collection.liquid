@@ -15,7 +15,7 @@
         {%- endif -%}
       </div>
       {%- if section.settings.view_all != blank and section.settings.collection != blank -%}
-        <a class="lx-coll__all" href="{{ section.settings.collection.url }}">{{ section.settings.view_all }} →</a>
+        <a class="lx-coll__all" href="{{ section.settings.collection.url }}">{{ section.settings.view_all }} <span class="lx-arrow" aria-hidden="true">→</span></a>
       {%- endif -%}
     </header>
 
@@ -27,7 +27,8 @@
             {%- if product.featured_image -%}
               {{ product.featured_image | image_url: width: 800 | image_tag:
                  loading: 'lazy', class: 'lx-card__img',
-                 sizes: '(min-width: 990px) 25vw, 50vw' }}
+                 widths: '200,300,400,600,800', sizes: '(min-width: 990px) 25vw, 50vw',
+                 alt: product.featured_image.alt | default: product.title | escape }}
             {%- else -%}
               {{ 'product-1' | placeholder_svg_tag: 'lx-card__img' }}
             {%- endif -%}
@@ -38,7 +39,7 @@
           </div>
         </a>
       {%- else -%}
-        <p class="lx-coll__empty">Pick a collection in the theme editor to show products here.</p>
+        <p class="lx-coll__empty">{{ 'leumx.editor.choose_collection' | t }}</p>
       {%- endfor -%}
     </div>
   </div>
@@ -57,6 +58,8 @@
     border-block-end: 1px solid var(--lx-gold); padding-block-end: 3px; white-space: nowrap;
   }
   .lx-coll__all:hover { color: var(--lx-gold); }
+  .lx-arrow { display: inline-block; }
+  [dir="rtl"] .lx-arrow { transform: scaleX(-1); }
 
   .lx-grid {
     display: grid; gap: clamp(1rem, 2vw, 2rem);

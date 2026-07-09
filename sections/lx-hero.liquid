@@ -1,0 +1,87 @@
+{%- comment -%}
+  LEUMX — Hero
+  Original section. Fully editable from the theme editor.
+  Navy surface, gold hairline eyebrow, serif display, optional lifestyle image.
+{%- endcomment -%}
+
+<section class="lx-hero" style="--h-min: {{ section.settings.height }}vh;">
+  {%- if section.settings.image != blank -%}
+    <div class="lx-hero__media">
+      {{ section.settings.image | image_url: width: 2400 | image_tag:
+         loading: 'eager', sizes: '100vw', class: 'lx-hero__img' }}
+      <div class="lx-hero__scrim"></div>
+    </div>
+  {%- endif -%}
+
+  <div class="lx-wrap lx-hero__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="lx-eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="lx-display lx-hero__title">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="lx-hero__sub">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    <div class="lx-hero__cta">
+      {%- if section.settings.btn1_label != blank -%}
+        <a class="lx-btn" href="{{ section.settings.btn1_link }}">{{ section.settings.btn1_label }}</a>
+      {%- endif -%}
+      {%- if section.settings.btn2_label != blank -%}
+        <a class="lx-btn lx-btn--ghost" href="{{ section.settings.btn2_link }}">{{ section.settings.btn2_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lx-hero {
+    position: relative;
+    min-block-size: var(--h-min, 78vh);
+    display: grid;
+    align-items: center;
+    background: var(--lx-navy);
+    color: var(--lx-cream);
+    overflow: hidden;
+  }
+  .lx-hero__media { position: absolute; inset: 0; }
+  .lx-hero__img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-hero__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(10,21,38,.92) 0%, rgba(10,21,38,.62) 45%, rgba(10,21,38,.20) 100%);
+  }
+  [dir="rtl"] .lx-hero__scrim {
+    background: linear-gradient(270deg, rgba(10,21,38,.92) 0%, rgba(10,21,38,.62) 45%, rgba(10,21,38,.20) 100%);
+  }
+  .lx-hero__inner { position: relative; padding-block: var(--lx-space); max-inline-size: 42rem; }
+  .lx-hero__title { font-size: var(--lx-h1); margin: 1.25rem 0 0; }
+  .lx-hero__sub {
+    font-family: var(--lx-body);
+    font-size: clamp(1rem, .9rem + .4vw, 1.2rem);
+    line-height: 1.6; color: rgba(246,243,236,.82);
+    margin: 1.5rem 0 0; max-inline-size: 34rem;
+  }
+  .lx-hero__cta { display: flex; flex-wrap: wrap; gap: 1rem; margin-block-start: 2.5rem; }
+</style>
+
+{% schema %}
+{
+  "name": "Leumx Hero",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "range", "id": "height", "label": "Height (vh)", "min": 50, "max": 100, "step": 2, "default": 78 },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Belgian-grade craftsmanship" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Cookware built to be handed down." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Precision tools for the modern kitchen — engineered for daily use, finished for a lifetime." },
+    { "type": "text", "id": "btn1_label", "label": "Primary button", "default": "Shop the collection" },
+    { "type": "url",  "id": "btn1_link",  "label": "Primary link" },
+    { "type": "text", "id": "btn2_label", "label": "Secondary button", "default": "Our story" },
+    { "type": "url",  "id": "btn2_link",  "label": "Secondary link" }
+  ],
+  "presets": [{ "name": "Leumx Hero" }]
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "lx-header": {
+      "type": "lx-header",
+      "settings": {
+        "logo_position": "center",
+        "menu": "main-menu",
+        "sticky": true,
+        "solid": false,
+        "show_search": true,
+        "show_account": true,
+        "show_language": true
+      }
+    }
+  },
+  "order": [
+    "lx-header"
+  ]
+}

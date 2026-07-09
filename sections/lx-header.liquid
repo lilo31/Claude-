@@ -1,0 +1,378 @@
+{%- comment -%}
+  LEUMX — Header
+  Original section. Sticky, transparent over hero then solid navy on scroll.
+  Logo (image or shop name), minimal nav, search + cart + EN/AR language switch.
+  RTL-aware via CSS logical properties. Fully editable from the theme editor.
+{%- endcomment -%}
+
+{%- liquid
+  assign menu = section.settings.menu
+  assign logo_pos = section.settings.logo_position
+-%}
+
+<lx-header
+  class="lx-header lx-header--{{ logo_pos }}{% if section.settings.solid %} is-solid{% endif %}"
+  data-sticky="{{ section.settings.sticky }}"
+  style="--header-nav-max: {{ section.settings.nav_max }}px;"
+>
+  <div class="lx-wrap lx-header__bar">
+
+    {%- comment -%} Mobile menu toggle (start side) {%- endcomment -%}
+    <button
+      type="button"
+      class="lx-header__icon lx-header__burger"
+      aria-expanded="false"
+      aria-controls="lx-nav-drawer"
+      aria-label="{{ 'general.menu' | t | default: 'Menu' }}"
+    >
+      <span class="lx-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+
+    {%- comment -%} Primary nav (inline on desktop) {%- endcomment -%}
+    {%- if linklists[menu].links.size > 0 -%}
+      <nav class="lx-header__nav" aria-label="{{ 'general.primary_nav' | t | default: 'Primary' }}">
+        <ul class="lx-header__menu" role="list">
+          {%- for link in linklists[menu].links -%}
+            <li class="lx-header__item{% if link.links.size > 0 %} has-sub{% endif %}">
+              <a class="lx-header__link" href="{{ link.url }}"
+                 {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
+              {%- if link.links.size > 0 -%}
+                <ul class="lx-header__sub" role="list">
+                  {%- for child in link.links -%}
+                    <li><a class="lx-header__sublink" href="{{ child.url }}">{{ child.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    {%- comment -%} Logo / wordmark (center or start) {%- endcomment -%}
+    <div class="lx-header__brand">
+      {%- if request.page_type == 'index' -%}
+        <h1 class="lx-header__logo">
+      {%- else -%}
+        <div class="lx-header__logo">
+      {%- endif -%}
+        <a href="{{ routes.root_url }}" class="lx-header__logo-link">
+          {%- if section.settings.logo != blank -%}
+            {{ section.settings.logo | image_url: width: 480 | image_tag:
+               loading: 'eager', class: 'lx-header__logo-img',
+               widths: '120,180,240,360,480',
+               sizes: '(max-width: 749px) 140px, 200px',
+               alt: shop.name,
+               style: 'max-block-size: ' | append: section.settings.logo_height | append: 'px;' }}
+          {%- else -%}
+            <span class="lx-header__wordmark lx-display">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+      {%- if request.page_type == 'index' -%}
+        </h1>
+      {%- else -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Actions: language, search, account, cart {%- endcomment -%}
+    <div class="lx-header__actions">
+
+      {%- if section.settings.show_language and localization.available_languages.size > 1 -%}
+        {%- form 'localization', class: 'lx-lang', id: 'lx-lang-desktop' -%}
+          <div class="lx-lang__wrap">
+            <button type="button" class="lx-header__icon lx-lang__toggle" aria-expanded="false" aria-controls="lx-lang-list">
+              <span class="lx-lang__current">{{ localization.language.endonym_name | capitalize }}</span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <ul class="lx-lang__list" id="lx-lang-list" role="list" hidden>
+              {%- for lang in localization.available_languages -%}
+                <li>
+                  <button type="submit" name="locale_code" value="{{ lang.iso_code }}"
+                    class="lx-lang__opt{% if lang.iso_code == localization.language.iso_code %} is-active{% endif %}"
+                    lang="{{ lang.iso_code }}">
+                    {{ lang.endonym_name | capitalize }}
+                  </button>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endform -%}
+      {%- endif -%}
+
+      {%- if section.settings.show_search -%}
+        <a class="lx-header__icon" href="{{ routes.search_url }}" aria-label="{{ 'general.search.search' | t | default: 'Search' }}">
+          {%- render 'lx-icon', icon: 'search' -%}
+        </a>
+      {%- endif -%}
+
+      {%- if shop.customer_accounts_enabled and section.settings.show_account -%}
+        <a class="lx-header__icon" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+           aria-label="{{ 'customer.account.title' | t | default: 'Account' }}">
+          {%- render 'lx-icon', icon: 'account' -%}
+        </a>
+      {%- endif -%}
+
+      <a class="lx-header__icon lx-header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'sections.cart.title' | t | default: 'Cart' }}">
+        {%- render 'lx-icon', icon: 'bag' -%}
+        <span class="lx-header__cart-count{% if cart.item_count == 0 %} is-empty{% endif %}" data-cart-count>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  {%- comment -%} Mobile nav drawer {%- endcomment -%}
+  <div class="lx-header__drawer" id="lx-nav-drawer" hidden>
+    <div class="lx-header__drawer-inner">
+      {%- if linklists[menu].links.size > 0 -%}
+        <ul class="lx-header__drawer-menu" role="list">
+          {%- for link in linklists[menu].links -%}
+            <li>
+              <a class="lx-header__drawer-link" href="{{ link.url }}">{{ link.title }}</a>
+              {%- if link.links.size > 0 -%}
+                <ul role="list" class="lx-header__drawer-sub">
+                  {%- for child in link.links -%}
+                    <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</lx-header>
+
+<style>
+  .lx-header {
+    --header-ink: var(--lx-cream);
+    position: relative;
+    z-index: 20;
+    background: transparent;
+    color: var(--header-ink);
+    transition: background .3s ease, color .3s ease, box-shadow .3s ease;
+  }
+  .lx-header[data-sticky="true"] { position: sticky; inset-block-start: 0; }
+  /* Solid state: forced by setting, or added by JS on scroll */
+  .lx-header.is-solid,
+  .lx-header.is-scrolled {
+    --header-ink: var(--lx-cream);
+    background: var(--lx-navy);
+    box-shadow: 0 1px 0 rgba(195,154,78,.28);
+  }
+
+  .lx-header__bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    min-block-size: 74px;
+  }
+  /* Center-logo layout: nav | brand | actions all balanced */
+  .lx-header--center .lx-header__brand { justify-self: center; text-align: center; }
+  .lx-header--start  .lx-header__bar { grid-template-columns: auto auto 1fr; }
+  .lx-header--start  .lx-header__brand { order: -1; justify-self: start; }
+  .lx-header--start  .lx-header__nav { justify-self: start; }
+
+  .lx-header__brand { min-inline-size: 0; }
+  .lx-header__logo { margin: 0; font-size: inherit; font-weight: inherit; }
+  .lx-header__logo-link { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
+  .lx-header__logo-img { display: block; inline-size: auto; }
+  .lx-header__wordmark {
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    letter-spacing: .04em; color: var(--header-ink);
+    text-transform: uppercase; font-weight: 500;
+  }
+
+  /* --- Nav (desktop) --- */
+  .lx-header__nav { min-inline-size: 0; }
+  .lx-header__menu { display: none; }
+  .lx-header__actions { display: flex; align-items: center; gap: .35rem; justify-self: end; }
+
+  .lx-header__icon {
+    --icon: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: .35rem; min-inline-size: 42px; min-block-size: 42px;
+    color: var(--header-ink); background: none; border: 0; cursor: pointer;
+    text-decoration: none; padding: 0 .4rem; border-radius: var(--lx-radius);
+    font-family: var(--lx-body); font-size: .8rem;
+  }
+  .lx-header__icon svg { inline-size: var(--icon); block-size: var(--icon); }
+  .lx-header__icon:hover { color: var(--lx-gold); }
+  .lx-header__icon:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
+
+  .lx-header__cart { position: relative; }
+  .lx-header__cart-count {
+    position: absolute; inset-block-start: 4px; inset-inline-end: 0;
+    min-inline-size: 18px; block-size: 18px; padding: 0 4px;
+    display: grid; place-items: center;
+    background: var(--lx-gold); color: var(--lx-navy);
+    font-family: var(--lx-body); font-size: .66rem; font-weight: 700;
+    border-radius: 999px; line-height: 1;
+  }
+  .lx-header__cart-count.is-empty { display: none; }
+
+  /* --- Language switcher --- */
+  .lx-lang { margin: 0; }
+  .lx-lang__wrap { position: relative; }
+  .lx-lang__toggle { text-transform: uppercase; letter-spacing: .08em; }
+  .lx-lang__list {
+    position: absolute; inset-block-start: calc(100% + 6px); inset-inline-end: 0;
+    background: var(--lx-navy-deep); border: 1px solid rgba(195,154,78,.3);
+    border-radius: var(--lx-radius); padding: .4rem; min-inline-size: 9rem; z-index: 30;
+    list-style: none; margin: 0;
+  }
+  .lx-lang__opt {
+    display: block; inline-size: 100%; text-align: start;
+    background: none; border: 0; cursor: pointer;
+    color: var(--lx-cream); font-family: var(--lx-body); font-size: .85rem;
+    padding: .5rem .6rem; border-radius: var(--lx-radius);
+  }
+  .lx-lang__opt:hover, .lx-lang__opt.is-active { color: var(--lx-gold); background: rgba(255,255,255,.04); }
+
+  /* --- Mobile burger --- */
+  .lx-burger { display: inline-flex; flex-direction: column; gap: 4px; inline-size: 20px; }
+  .lx-burger span { display: block; block-size: 1.5px; background: currentColor; transition: transform .25s ease, opacity .2s ease; }
+  .lx-header__burger[aria-expanded="true"] .lx-burger span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+  .lx-header__burger[aria-expanded="true"] .lx-burger span:nth-child(2) { opacity: 0; }
+  .lx-header__burger[aria-expanded="true"] .lx-burger span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+  /* --- Mobile drawer --- */
+  .lx-header__drawer {
+    background: var(--lx-navy); border-block-start: 1px solid rgba(195,154,78,.24);
+    overflow: hidden;
+  }
+  .lx-header__drawer[hidden] { display: none; }
+  .lx-header__drawer-inner { padding: 1rem clamp(1.25rem, 0.5rem + 3vw, 3rem) 2rem; }
+  .lx-header__drawer-menu { list-style: none; margin: 0; padding: 0; }
+  .lx-header__drawer-link {
+    display: block; padding: .9rem 0; color: var(--lx-cream);
+    font-family: var(--lx-display); font-size: 1.4rem; text-decoration: none;
+    border-block-end: 1px solid rgba(255,255,255,.08);
+  }
+  .lx-header__drawer-link:hover { color: var(--lx-gold); }
+  .lx-header__drawer-sub { list-style: none; margin: 0 0 .5rem; padding-inline-start: 1rem; }
+  .lx-header__drawer-sub a {
+    display: block; padding: .5rem 0; color: rgba(246,243,236,.72);
+    font-family: var(--lx-body); font-size: .95rem; text-decoration: none;
+  }
+  .lx-header__drawer-sub a:hover { color: var(--lx-gold); }
+
+  /* --- Desktop breakpoint --- */
+  @media (min-width: 990px) {
+    .lx-header__burger { display: none; }
+    .lx-header__menu {
+      display: flex; align-items: center; gap: clamp(1.25rem, 2vw, 2.5rem);
+      list-style: none; margin: 0; padding: 0;
+      max-inline-size: var(--header-nav-max, 640px);
+    }
+    .lx-header__item { position: relative; }
+    .lx-header__link {
+      color: var(--header-ink); text-decoration: none;
+      font-family: var(--lx-body); font-size: .82rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding-block: 1.5rem; display: inline-block; position: relative;
+    }
+    .lx-header__link::after {
+      content: ""; position: absolute; inset-block-end: 1.15rem; inset-inline-start: 0;
+      inline-size: 0; block-size: 1px; background: var(--lx-gold); transition: inline-size .3s ease;
+    }
+    [dir="rtl"] .lx-header__link::after { inset-inline-start: auto; inset-inline-end: 0; }
+    .lx-header__link:hover::after,
+    .lx-header__link[aria-current="page"]::after { inline-size: 100%; }
+
+    /* dropdown */
+    .lx-header__sub {
+      position: absolute; inset-block-start: 100%; inset-inline-start: 0;
+      background: var(--lx-navy-deep); border: 1px solid rgba(195,154,78,.24);
+      border-radius: var(--lx-radius); padding: .5rem; min-inline-size: 12rem;
+      list-style: none; margin: 0; opacity: 0; visibility: hidden;
+      transform: translateY(6px); transition: opacity .2s ease, transform .2s ease, visibility .2s;
+      z-index: 30;
+    }
+    .lx-header__item.has-sub:hover .lx-header__sub,
+    .lx-header__item.has-sub:focus-within .lx-header__sub { opacity: 1; visibility: visible; transform: translateY(0); }
+    .lx-header__sublink {
+      display: block; padding: .6rem .7rem; color: var(--lx-cream);
+      font-family: var(--lx-body); font-size: .85rem; text-decoration: none; border-radius: var(--lx-radius);
+    }
+    .lx-header__sublink:hover { color: var(--lx-gold); background: rgba(255,255,255,.04); }
+
+    .lx-header__drawer { display: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    var roots = document.querySelectorAll('lx-header');
+    roots.forEach(function (root) {
+      // Sticky solid-on-scroll
+      if (root.getAttribute('data-sticky') === 'true' && !root.classList.contains('is-solid')) {
+        var onScroll = function () {
+          root.classList.toggle('is-scrolled', window.scrollY > 24);
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // Mobile drawer
+      var burger = root.querySelector('.lx-header__burger');
+      var drawer = root.querySelector('.lx-header__drawer');
+      if (burger && drawer) {
+        burger.addEventListener('click', function () {
+          var open = burger.getAttribute('aria-expanded') === 'true';
+          burger.setAttribute('aria-expanded', String(!open));
+          drawer.hidden = open;
+        });
+      }
+
+      // Language dropdown
+      var langToggle = root.querySelector('.lx-lang__toggle');
+      var langList = root.querySelector('.lx-lang__list');
+      if (langToggle && langList) {
+        langToggle.addEventListener('click', function () {
+          var open = langToggle.getAttribute('aria-expanded') === 'true';
+          langToggle.setAttribute('aria-expanded', String(!open));
+          langList.hidden = open;
+        });
+        document.addEventListener('click', function (e) {
+          if (!root.contains(e.target)) { langToggle.setAttribute('aria-expanded', 'false'); langList.hidden = true; }
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { langToggle.setAttribute('aria-expanded', 'false'); langList.hidden = true; }
+        });
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Leumx Header",
+  "tag": "header",
+  "class": "lx-header-section",
+  "settings": [
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "range", "id": "logo_height", "label": "Logo height (px)", "min": 24, "max": 80, "step": 2, "default": 40 },
+    {
+      "type": "select", "id": "logo_position", "label": "Logo position", "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "start", "label": "Start (inline-start)" }
+      ]
+    },
+    { "type": "header", "content": "Navigation" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "range", "id": "nav_max", "label": "Nav max width (px)", "min": 400, "max": 900, "step": 20, "default": 640 },
+    { "type": "header", "content": "Behaviour" },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": true },
+    { "type": "checkbox", "id": "solid", "label": "Always solid navy (off = transparent over hero)", "default": false },
+    { "type": "header", "content": "Actions" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Show account", "default": true },
+    { "type": "checkbox", "id": "show_language", "label": "Show EN/AR language switch", "default": true }
+  ],
+  "presets": [{ "name": "Leumx Header" }]
+}
+{% endschema %}

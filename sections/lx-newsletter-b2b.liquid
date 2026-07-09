@@ -1,0 +1,178 @@
+{%- comment -%}
+  LEUMX — Newsletter / B2B wholesale CTA
+  Two-column navy panel: retail newsletter capture + wholesale/B2B lead.
+  Modes: 'both', 'newsletter', 'b2b'. Gold accents, hairline eyebrow. RTL-aware.
+  B2B lead uses the native contact form (tagged 'b2b') so leads land in admin.
+{%- endcomment -%}
+
+<section class="lx-nb" style="--surface: {{ section.settings.bg }};">
+  {%- if section.settings.image != blank -%}
+    <div class="lx-nb__bg" aria-hidden="true">
+      {{ section.settings.image | image_url: width: 2000 | image_tag:
+         loading: 'lazy', class: 'lx-nb__bg-img', sizes: '100vw' }}
+      <span class="lx-nb__bg-scrim"></span>
+    </div>
+  {%- endif -%}
+
+  <div class="lx-wrap lx-nb__inner" data-mode="{{ section.settings.mode }}">
+
+    {%- if section.settings.mode != 'b2b' -%}
+      <div class="lx-nb__panel lx-nb__panel--news">
+        {%- if section.settings.news_eyebrow != blank -%}
+          <span class="lx-eyebrow">{{ section.settings.news_eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.news_heading != blank -%}
+          <h2 class="lx-display lx-nb__title">{{ section.settings.news_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.news_body != blank -%}
+          <p class="lx-nb__body">{{ section.settings.news_body }}</p>
+        {%- endif -%}
+
+        {%- form 'customer', id: 'lx-nb-news', class: 'lx-nb__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="lx-nb__ok">{%- render 'lx-icon', icon: 'check' -%} {{ 'newsletter.success' | t | default: 'Thanks — you’re on the list.' }}</p>
+          {%- else -%}
+            <div class="lx-field lx-field--onnavy">
+              <label class="visually-hidden" for="lx-nb-email">{{ 'newsletter.email' | t | default: 'Email' }}</label>
+              <input id="lx-nb-email" type="email" name="contact[email]" required autocomplete="email"
+                     class="lx-field__input" placeholder="{{ section.settings.news_placeholder | default: 'Your email address' }}">
+              <button type="submit" class="lx-field__btn">{{ section.settings.news_button | default: 'Join' }}</button>
+            </div>
+            {%- if form.errors -%}
+              <p class="lx-nb__err">{{ form.errors | default_errors }}</p>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.mode != 'newsletter' -%}
+      <div class="lx-nb__panel lx-nb__panel--b2b">
+        <span class="lx-eyebrow">{{ section.settings.b2b_eyebrow | default: 'For trade' }}</span>
+        {%- if section.settings.b2b_heading != blank -%}
+          <h2 class="lx-display lx-nb__title">{{ section.settings.b2b_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.b2b_body != blank -%}
+          <p class="lx-nb__body">{{ section.settings.b2b_body }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.b2b_use_form -%}
+          {%- form 'contact', id: 'lx-nb-b2b', class: 'lx-nb__form lx-nb__form--b2b' -%}
+            <input type="hidden" name="contact[tags]" value="b2b,wholesale">
+            {%- if form.posted_successfully? -%}
+              <p class="lx-nb__ok">{%- render 'lx-icon', icon: 'check' -%} {{ 'contact.form.post_success' | t | default: 'Thanks — our trade team will be in touch.' }}</p>
+            {%- else -%}
+              <div class="lx-nb__fields">
+                <label class="visually-hidden" for="lx-b2b-name">Name</label>
+                <input id="lx-b2b-name" type="text" name="contact[name]" required class="lx-input" placeholder="Company / name">
+                <label class="visually-hidden" for="lx-b2b-email">Email</label>
+                <input id="lx-b2b-email" type="email" name="contact[email]" required autocomplete="email" class="lx-input" placeholder="Work email">
+                <label class="visually-hidden" for="lx-b2b-msg">Message</label>
+                <textarea id="lx-b2b-msg" name="contact[body]" rows="3" class="lx-input" placeholder="Tell us about your business"></textarea>
+                <button type="submit" class="lx-btn">{{ section.settings.b2b_button | default: 'Request wholesale access' }}</button>
+              </div>
+              {%- if form.errors -%}
+                <p class="lx-nb__err">{{ form.errors | default_errors }}</p>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endform -%}
+        {%- else -%}
+          {%- if section.settings.b2b_link_label != blank -%}
+            <a class="lx-btn" href="{{ section.settings.b2b_link }}">{{ section.settings.b2b_link_label }}</a>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .lx-nb { position: relative; background: var(--surface, var(--lx-navy)); color: var(--lx-cream); overflow: hidden; }
+  .lx-nb__bg { position: absolute; inset: 0; }
+  .lx-nb__bg-img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-nb__bg-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,21,38,.94), rgba(10,21,38,.7)); }
+  [dir="rtl"] .lx-nb__bg-scrim { background: linear-gradient(270deg, rgba(10,21,38,.94), rgba(10,21,38,.7)); }
+
+  .lx-nb__inner {
+    position: relative; display: grid; gap: clamp(2.5rem, 5vw, 5rem);
+    padding-block: var(--lx-space); grid-template-columns: 1fr;
+  }
+  @media (min-width: 850px) { .lx-nb__inner[data-mode="both"] { grid-template-columns: 1fr 1fr; } }
+
+  .lx-nb__panel--b2b { position: relative; }
+  @media (min-width: 850px) {
+    .lx-nb__inner[data-mode="both"] .lx-nb__panel--b2b {
+      padding-inline-start: clamp(2.5rem, 5vw, 5rem);
+    }
+    .lx-nb__inner[data-mode="both"] .lx-nb__panel--b2b::before {
+      content: ""; position: absolute; inset-inline-start: 0; inset-block: 0;
+      inline-size: 1px; background: linear-gradient(180deg, transparent, rgba(195,154,78,.5), transparent);
+    }
+  }
+
+  .lx-nb__title { font-size: var(--lx-h2); margin: 1rem 0 0; color: var(--lx-cream); }
+  .lx-nb__body { margin: 1rem 0 1.75rem; max-inline-size: 34rem; line-height: 1.6; color: rgba(246,243,236,.82); font-family: var(--lx-body); }
+
+  /* Inline field (newsletter) */
+  .lx-field { display: flex; align-items: stretch; max-inline-size: 30rem; border: 1px solid rgba(195,154,78,.45); border-radius: var(--lx-radius); overflow: hidden; }
+  .lx-field__input { flex: 1; min-inline-size: 0; background: transparent; border: 0; color: var(--lx-cream); font-family: var(--lx-body); font-size: .95rem; padding: 1rem 1.1rem; }
+  .lx-field__input::placeholder { color: rgba(246,243,236,.5); }
+  .lx-field__input:focus { outline: none; }
+  .lx-field:focus-within { border-color: var(--lx-gold); }
+  .lx-field__btn {
+    background: var(--lx-gold); color: var(--lx-navy); border: 0; cursor: pointer; padding-inline: 1.5rem;
+    font-family: var(--lx-body); font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; transition: background .2s ease;
+  }
+  .lx-field__btn:hover { background: var(--lx-gold-bright); }
+
+  /* Stacked fields (B2B) */
+  .lx-nb__fields { display: grid; gap: .75rem; max-inline-size: 34rem; }
+  .lx-input {
+    inline-size: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.18);
+    border-radius: var(--lx-radius); color: var(--lx-cream); font-family: var(--lx-body); font-size: .95rem; padding: .85rem 1rem;
+  }
+  .lx-input::placeholder { color: rgba(246,243,236,.5); }
+  .lx-input:focus { outline: none; border-color: var(--lx-gold); }
+  .lx-nb__fields .lx-btn { justify-self: start; margin-block-start: .25rem; }
+
+  .lx-nb__ok { display: inline-flex; align-items: center; gap: .5rem; color: var(--lx-gold); font-family: var(--lx-body); }
+  .lx-nb__ok .lx-svg { inline-size: 20px; block-size: 20px; }
+  .lx-nb__err { color: #E5A3A3; font-family: var(--lx-body); font-size: .85rem; margin-block-start: .6rem; }
+</style>
+
+{% schema %}
+{
+  "name": "Leumx Newsletter / B2B",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select", "id": "mode", "label": "Mode", "default": "both",
+      "options": [
+        { "value": "both", "label": "Newsletter + B2B" },
+        { "value": "newsletter", "label": "Newsletter only" },
+        { "value": "b2b", "label": "B2B only" }
+      ]
+    },
+    { "type": "image_picker", "id": "image", "label": "Background image (optional)" },
+    { "type": "color", "id": "bg", "label": "Background colour", "default": "#0E1D33" },
+
+    { "type": "header", "content": "Newsletter" },
+    { "type": "text", "id": "news_eyebrow", "label": "Eyebrow", "default": "Stay in the loop" },
+    { "type": "text", "id": "news_heading", "label": "Heading", "default": "The Leumx list" },
+    { "type": "textarea", "id": "news_body", "label": "Body", "default": "New arrivals, kitchen stories and members-only offers — a few times a month." },
+    { "type": "text", "id": "news_placeholder", "label": "Input placeholder", "default": "Your email address" },
+    { "type": "text", "id": "news_button", "label": "Button label", "default": "Join" },
+
+    { "type": "header", "content": "B2B / Wholesale" },
+    { "type": "text", "id": "b2b_eyebrow", "label": "Eyebrow", "default": "For trade" },
+    { "type": "text", "id": "b2b_heading", "label": "Heading", "default": "Wholesale & partnerships" },
+    { "type": "textarea", "id": "b2b_body", "label": "Body", "default": "Stock Leumx in your store, hotel or restaurant. Tell us about your business and our trade team will be in touch." },
+    { "type": "checkbox", "id": "b2b_use_form", "label": "Use inline lead form (off = button/link)", "default": true },
+    { "type": "text", "id": "b2b_button", "label": "Form button label", "default": "Request wholesale access" },
+    { "type": "text", "id": "b2b_link_label", "label": "Link label (when form is off)", "default": "Wholesale enquiries" },
+    { "type": "url", "id": "b2b_link", "label": "Link (when form is off)" }
+  ],
+  "presets": [{ "name": "Leumx Newsletter / B2B" }]
+}
+{% endschema %}

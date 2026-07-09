@@ -1,0 +1,377 @@
+{%- comment -%}
+  LEUMX — Main product
+  Gallery (thumbs + main) + sticky buy box. Gold accents, variant picker,
+  quantity, add-to-cart. Trust row + spec table via blocks. RTL-aware.
+  Original section — no competitor markup. Editable via {% schema %}.
+{%- endcomment -%}
+
+{%- liquid
+  assign product = product
+  assign current = product.selected_or_first_available_variant
+-%}
+
+<section class="lx-pdp" data-lx-product>
+  <div class="lx-wrap lx-pdp__grid">
+
+    {%- comment -%} ============ Gallery ============ {%- endcomment -%}
+    <div class="lx-pdp__gallery" data-lx-gallery>
+      <div class="lx-pdp__stage">
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media -%}
+            <div class="lx-pdp__slide{% if forloop.first %} is-active{% endif %}"
+                 data-media-id="{{ media.id }}" {% unless forloop.first %}hidden{% endunless %}>
+              {%- if media.media_type == 'image' -%}
+                {{ media | image_url: width: 1400 | image_tag:
+                   loading: forloop.first | default: false, class: 'lx-pdp__img',
+                   widths: '400,600,800,1000,1400',
+                   sizes: '(min-width: 990px) 55vw, 100vw',
+                   alt: media.alt | escape }}
+              {%- else -%}
+                {{ media | media_tag: image_size: '1400x', class: 'lx-pdp__img' }}
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'lx-pdp__img lx-pdp__img--ph' }}
+        {%- endif -%}
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <ul class="lx-pdp__thumbs" role="list">
+          {%- for media in product.media -%}
+            <li>
+              <button type="button" class="lx-pdp__thumb{% if forloop.first %} is-active{% endif %}"
+                      data-thumb="{{ media.id }}" aria-label="View image {{ forloop.index }}">
+                {{ media.preview_image | image_url: width: 200 | image_tag:
+                   loading: 'lazy', widths: '100,160,200', sizes: '80px', alt: media.alt | escape }}
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ============ Buy box (sticky) ============ {%- endcomment -%}
+    <div class="lx-pdp__info">
+      <div class="lx-pdp__info-inner">
+
+        {%- if section.settings.show_vendor and product.vendor != blank -%}
+          <span class="lx-eyebrow">{{ product.vendor }}</span>
+        {%- endif -%}
+
+        <h1 class="lx-display lx-pdp__title">{{ product.title }}</h1>
+
+        <div class="lx-pdp__price" data-lx-price>
+          {%- render 'lx-price', variant: current -%}
+        </div>
+
+        {%- if section.settings.show_short and product.metafields.descriptors.subtitle != blank -%}
+          <p class="lx-pdp__short">{{ product.metafields.descriptors.subtitle }}</p>
+        {%- endif -%}
+
+        {%- form 'product', product, id: 'lx-product-form', class: 'lx-pdp__form', novalidate: 'novalidate' -%}
+          {%- unless product.has_only_default_variant -%}
+            <div class="lx-pdp__options">
+              {%- for option in product.options_with_values -%}
+                <fieldset class="lx-opt" data-option-index="{{ forloop.index0 }}">
+                  <legend class="lx-opt__label">{{ option.name }}</legend>
+                  <div class="lx-opt__values">
+                    {%- for value in option.values -%}
+                      {%- assign oid = 'opt-' | append: forloop.index0 | append: '-' | append: value | handle -%}
+                      <input type="radio" class="lx-opt__input visually-hidden"
+                             id="{{ oid }}" name="option-{{ forloop.parentloop.index0 }}"
+                             value="{{ value | escape }}"
+                             {% if option.selected_value == value %}checked{% endif %}
+                             data-option-index="{{ forloop.parentloop.index0 }}">
+                      <label for="{{ oid }}" class="lx-opt__chip">{{ value }}</label>
+                    {%- endfor -%}
+                  </div>
+                </fieldset>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+
+          <select name="id" class="visually-hidden" data-lx-variant-select aria-hidden="true" tabindex="-1">
+            {%- for variant in product.variants -%}
+              <option value="{{ variant.id }}"
+                      {% if variant == current %}selected{% endif %}
+                      {% unless variant.available %}disabled{% endunless %}>
+                {{ variant.title }}
+              </option>
+            {%- endfor -%}
+          </select>
+
+          <div class="lx-pdp__buy">
+            <div class="lx-qty" data-lx-qty>
+              <button type="button" class="lx-qty__btn" data-qty-down aria-label="Decrease quantity">{%- render 'lx-icon', icon: 'minus' -%}</button>
+              <input type="number" class="lx-qty__input" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity">
+              <button type="button" class="lx-qty__btn" data-qty-up aria-label="Increase quantity">{%- render 'lx-icon', icon: 'plus' -%}</button>
+            </div>
+
+            <button type="submit" name="add" class="lx-btn lx-pdp__add"
+                    {% unless current.available %}disabled{% endunless %} data-lx-add>
+              <span data-add-text>
+                {%- if current.available -%}{{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
+                {%- else -%}{{ 'products.product.sold_out' | t | default: 'Sold out' }}{%- endif -%}
+              </span>
+            </button>
+          </div>
+        {%- endform -%}
+
+        {%- comment -%} ---- Trust row ---- {%- endcomment -%}
+        {%- assign trust_blocks = section.blocks | where: 'type', 'trust' -%}
+        {%- if trust_blocks.size > 0 -%}
+          <ul class="lx-pdp__trust" role="list">
+            {%- for block in trust_blocks -%}
+              <li class="lx-pdp__trust-item" {{ block.shopify_attributes }}>
+                {%- render 'lx-icon', icon: block.settings.icon -%}
+                <span>
+                  <strong>{{ block.settings.title }}</strong>
+                  {%- if block.settings.text != blank %}<em>{{ block.settings.text }}</em>{% endif -%}
+                </span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- comment -%} ---- Description ---- {%- endcomment -%}
+        {%- if product.description != blank -%}
+          <div class="lx-pdp__desc rte">{{ product.description }}</div>
+        {%- endif -%}
+
+        {%- comment -%} ---- Spec table ---- {%- endcomment -%}
+        {%- assign spec_blocks = section.blocks | where: 'type', 'spec' -%}
+        {%- if spec_blocks.size > 0 -%}
+          <div class="lx-pdp__specs">
+            {%- if section.settings.specs_title != blank -%}
+              <h2 class="lx-pdp__specs-title">{{ section.settings.specs_title }}</h2>
+            {%- endif -%}
+            <table class="lx-spec">
+              <tbody>
+                {%- for block in spec_blocks -%}
+                  <tr {{ block.shopify_attributes }}>
+                    <th scope="row">{{ block.settings.label }}</th>
+                    <td>{{ block.settings.value }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} Variant data for the picker {%- endcomment -%}
+<script type="application/json" data-lx-variants>
+  {{ product.variants | json }}
+</script>
+
+<style>
+  .lx-pdp { background: var(--lx-paper); color: var(--lx-ink); padding-block: clamp(2rem, 4vw, 4rem) var(--lx-space); }
+  .lx-pdp__grid { display: grid; gap: clamp(2rem, 4vw, 4rem); grid-template-columns: 1fr; }
+  @media (min-width: 990px) { .lx-pdp__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } }
+
+  /* Gallery */
+  .lx-pdp__stage { position: relative; background: var(--lx-cream); border: 1px solid var(--lx-line); border-radius: var(--lx-radius); overflow: hidden; }
+  .lx-pdp__slide { aspect-ratio: 1 / 1; }
+  .lx-pdp__slide[hidden] { display: none; }
+  .lx-pdp__img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-pdp__img--ph { object-fit: contain; padding: 2rem; }
+  .lx-pdp__thumbs { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; margin: .8rem 0 0; padding: 0; }
+  .lx-pdp__thumb {
+    inline-size: 68px; block-size: 68px; padding: 0; cursor: pointer; overflow: hidden;
+    background: var(--lx-cream); border: 1px solid var(--lx-line); border-radius: var(--lx-radius); transition: border-color .2s ease;
+  }
+  .lx-pdp__thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-pdp__thumb.is-active { border-color: var(--lx-gold); }
+  .lx-pdp__thumb:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
+
+  /* Buy box */
+  @media (min-width: 990px) { .lx-pdp__info-inner { position: sticky; inset-block-start: 96px; } }
+  .lx-pdp__title { font-size: clamp(1.9rem, 1.3rem + 2vw, 2.8rem); margin: .6rem 0 0; }
+  .lx-pdp__price { margin-block-start: 1rem; font-family: var(--lx-body); font-size: 1.35rem; font-weight: 600; color: var(--lx-ink); }
+  .lx-pdp__short { margin: 1rem 0 0; color: var(--lx-ink-soft); font-family: var(--lx-body); line-height: 1.6; }
+
+  .lx-pdp__form { margin-block-start: 1.75rem; }
+  .lx-pdp__options { display: grid; gap: 1.25rem; }
+  .lx-opt { border: 0; padding: 0; margin: 0; }
+  .lx-opt__label { font-family: var(--lx-body); font-size: .74rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--lx-ink-soft); padding: 0; margin-block-end: .6rem; }
+  .lx-opt__values { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .lx-opt__chip {
+    display: inline-flex; align-items: center; min-block-size: 42px; padding: 0 1.1rem; cursor: pointer;
+    border: 1px solid var(--lx-line); border-radius: var(--lx-radius); background: var(--lx-paper);
+    font-family: var(--lx-body); font-size: .9rem; color: var(--lx-ink); transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+  .lx-opt__chip:hover { border-color: var(--lx-gold); }
+  .lx-opt__input:checked + .lx-opt__chip { border-color: var(--lx-gold); background: var(--lx-navy); color: var(--lx-cream); }
+  .lx-opt__input:focus-visible + .lx-opt__chip { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
+  .lx-opt__input.is-unavailable + .lx-opt__chip { opacity: .4; text-decoration: line-through; }
+
+  .lx-pdp__buy { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: 1.75rem; }
+  .lx-qty { display: inline-flex; align-items: center; border: 1px solid var(--lx-line); border-radius: var(--lx-radius); }
+  .lx-qty__btn { inline-size: 44px; block-size: 48px; display: grid; place-items: center; background: none; border: 0; cursor: pointer; color: var(--lx-ink); }
+  .lx-qty__btn:hover { color: var(--lx-gold); }
+  .lx-qty__btn .lx-svg { inline-size: 16px; block-size: 16px; }
+  .lx-qty__input { inline-size: 46px; block-size: 48px; text-align: center; border: 0; background: none; font-family: var(--lx-body); font-size: 1rem; color: var(--lx-ink); -moz-appearance: textfield; }
+  .lx-qty__input::-webkit-outer-spin-button, .lx-qty__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .lx-pdp__add { flex: 1; min-inline-size: 12rem; text-align: center; }
+  .lx-pdp__add[disabled] { opacity: .5; cursor: not-allowed; }
+
+  .lx-pdp__trust { display: grid; gap: .9rem; list-style: none; margin: 2rem 0 0; padding: 1.25rem 0 0; border-block-start: 1px solid var(--lx-line); }
+  .lx-pdp__trust-item { display: flex; align-items: center; gap: .75rem; font-family: var(--lx-body); }
+  .lx-pdp__trust-item .lx-svg { inline-size: 22px; block-size: 22px; color: var(--lx-gold); flex: none; }
+  .lx-pdp__trust-item strong { display: block; font-size: .9rem; font-weight: 600; color: var(--lx-ink); }
+  .lx-pdp__trust-item em { font-style: normal; font-size: .82rem; color: var(--lx-ink-soft); }
+
+  .lx-pdp__desc { margin-block-start: 2rem; font-family: var(--lx-body); line-height: 1.7; color: var(--lx-ink); }
+  .lx-pdp__desc p { margin: 0 0 1rem; }
+
+  .lx-pdp__specs { margin-block-start: 2rem; }
+  .lx-pdp__specs-title { font-family: var(--lx-body); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--lx-ink-soft); margin: 0 0 .75rem; }
+  .lx-spec { inline-size: 100%; border-collapse: collapse; font-family: var(--lx-body); font-size: .92rem; }
+  .lx-spec th, .lx-spec td { text-align: start; padding: .75rem 0; border-block-end: 1px solid var(--lx-line); vertical-align: top; }
+  .lx-spec th { inline-size: 40%; font-weight: 600; color: var(--lx-ink-soft); }
+  .lx-spec td { color: var(--lx-ink); }
+</style>
+
+<script>
+  (function () {
+    var root = document.querySelector('[data-lx-product]');
+    if (!root) return;
+
+    /* ---- Gallery swap ---- */
+    var thumbs = root.querySelectorAll('[data-thumb]');
+    var slides = root.querySelectorAll('.lx-pdp__slide');
+    function showMedia(id) {
+      slides.forEach(function (s) {
+        var on = s.getAttribute('data-media-id') === String(id);
+        s.hidden = !on; s.classList.toggle('is-active', on);
+      });
+      thumbs.forEach(function (t) {
+        t.classList.toggle('is-active', t.getAttribute('data-thumb') === String(id));
+      });
+    }
+    thumbs.forEach(function (t) {
+      t.addEventListener('click', function () { showMedia(t.getAttribute('data-thumb')); });
+    });
+
+    /* ---- Quantity ---- */
+    var qtyInput = root.querySelector('.lx-qty__input');
+    if (qtyInput) {
+      root.querySelector('[data-qty-down]').addEventListener('click', function () {
+        qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
+      });
+      root.querySelector('[data-qty-up]').addEventListener('click', function () {
+        qtyInput.value = (parseInt(qtyInput.value, 10) || 1) + 1;
+      });
+    }
+
+    /* ---- Variant picker ---- */
+    var dataEl = root.querySelector('[data-lx-variants]');
+    var variants = dataEl ? JSON.parse(dataEl.textContent) : [];
+    var select = root.querySelector('[data-lx-variant-select]');
+    var optionInputs = root.querySelectorAll('.lx-opt__input');
+    var priceEl = root.querySelector('[data-lx-price]');
+    var addBtn = root.querySelector('[data-lx-add]');
+    var addText = root.querySelector('[data-add-text]');
+    var moneyFormat = {{ shop.money_format | json }};
+
+    function selectedOptions() {
+      var opts = [];
+      root.querySelectorAll('.lx-opt').forEach(function (fs) {
+        var checked = fs.querySelector('.lx-opt__input:checked');
+        if (checked) opts.push(checked.value);
+      });
+      return opts;
+    }
+    function matchVariant(opts) {
+      return variants.find(function (v) {
+        return (v.options || []).every(function (o, i) { return o === opts[i]; });
+      });
+    }
+    function formatMoney(cents) {
+      var v = (cents / 100).toFixed(2);
+      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/, v).replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100));
+    }
+    function update() {
+      if (!optionInputs.length) return;
+      var opts = selectedOptions();
+      var v = matchVariant(opts);
+      if (!v) return;
+      if (select) select.value = v.id;
+      if (priceEl) {
+        var html = formatMoney(v.price);
+        if (v.compare_at_price && v.compare_at_price > v.price) {
+          html = '<span class="lx-price__now">' + formatMoney(v.price) + '</span>' +
+                 ' <s class="lx-price__was">' + formatMoney(v.compare_at_price) + '</s>';
+        }
+        priceEl.innerHTML = html;
+      }
+      if (addBtn && addText) {
+        addBtn.disabled = !v.available;
+        addText.textContent = v.available ? {{ 'products.product.add_to_cart' | t | json }} : {{ 'products.product.sold_out' | t | json }};
+      }
+      if (history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', v.id);
+        history.replaceState({}, '', url);
+      }
+    }
+    optionInputs.forEach(function (inp) { inp.addEventListener('change', update); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Leumx Product",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor as eyebrow", "default": true },
+    { "type": "checkbox", "id": "show_short", "label": "Show subtitle (metafield descriptors.subtitle)", "default": false },
+    { "type": "text", "id": "specs_title", "label": "Spec table title", "default": "Specifications" }
+  ],
+  "blocks": [
+    {
+      "type": "trust",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "shield",
+          "options": [
+            { "value": "shield", "label": "Shield / warranty" },
+            { "value": "truck", "label": "Truck / shipping" },
+            { "value": "check", "label": "Check / QC" },
+            { "value": "sparkle", "label": "Sparkle / quality" },
+            { "value": "leaf", "label": "Leaf / materials" }
+          ]
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "2-year warranty" },
+        { "type": "text", "id": "text", "label": "Subtext", "default": "Registered on purchase" }
+      ]
+    },
+    {
+      "type": "spec",
+      "name": "Spec row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Material" },
+        { "type": "text", "id": "value", "label": "Value", "default": "18/10 stainless steel" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Leumx Product",
+      "blocks": [
+        { "type": "trust", "settings": { "icon": "shield", "title": "2-year warranty", "text": "Registered on purchase" } },
+        { "type": "trust", "settings": { "icon": "truck", "title": "Free shipping", "text": "On orders over the threshold" } },
+        { "type": "trust", "settings": { "icon": "check", "title": "Quality checked", "text": "Inspected before dispatch" } },
+        { "type": "spec", "settings": { "label": "Material", "value": "18/10 stainless steel" } },
+        { "type": "spec", "settings": { "label": "Compatibility", "value": "All hobs incl. induction" } },
+        { "type": "spec", "settings": { "label": "Care", "value": "Dishwasher safe" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

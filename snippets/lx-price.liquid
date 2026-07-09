@@ -1,0 +1,36 @@
+{%- comment -%}
+  LEUMX — Price
+  Usage: {% render 'lx-price', variant: variant %}  (or product: product)
+  Shows current price, compare-at (strikethrough) and a sale/sold-out tag.
+{%- endcomment -%}
+{%- liquid
+  if variant
+    assign target = variant
+  elsif product
+    assign target = product.selected_or_first_available_variant
+  endif
+  assign price = target.price
+  assign compare = target.compare_at_price
+-%}
+<span class="lx-price">
+  {%- if compare > price -%}
+    <span class="lx-price__now lx-price--sale">{{ price | money }}</span>
+    <s class="lx-price__was">{{ compare | money }}</s>
+    <span class="lx-price__tag">{{ 'products.product.on_sale' | t | default: 'Sale' }}</span>
+  {%- else -%}
+    <span class="lx-price__now">{{ price | money }}</span>
+  {%- endif -%}
+  {%- unless target.available -%}
+    <span class="lx-price__tag lx-price__tag--out">{{ 'products.product.sold_out' | t | default: 'Sold out' }}</span>
+  {%- endunless -%}
+</span>
+<style>
+  .lx-price__was { color: var(--lx-ink-soft); font-weight: 400; margin-inline-start: .5rem; }
+  .lx-price--sale { color: var(--lx-gold); }
+  .lx-price__tag {
+    display: inline-block; margin-inline-start: .5rem; padding: .15rem .5rem;
+    font-family: var(--lx-body); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+    font-weight: 600; color: var(--lx-navy); background: var(--lx-gold); border-radius: var(--lx-radius); vertical-align: middle;
+  }
+  .lx-price__tag--out { background: var(--lx-ink-soft); color: var(--lx-cream); }
+</style>

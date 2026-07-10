@@ -105,8 +105,16 @@
         .replace(/\{\{\s*amount\s*\}\}/, v)
         .replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100));
     }
+    function syncSelectedLabels() {
+      pdp.querySelectorAll('.lx-opt').forEach(function (fs) {
+        var checked = fs.querySelector('.lx-opt__input:checked');
+        var label = fs.querySelector('[data-opt-selected]');
+        if (checked && label) label.textContent = checked.value;
+      });
+    }
     function update() {
       if (!optionInputs.length) return;
+      syncSelectedLabels();
       var v = matchVariant(selectedOptions());
       if (!v) return;
       if (select) select.value = v.id;

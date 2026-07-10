@@ -39,7 +39,8 @@
     "product": {
       "view_image": "عرض الصورة {{ number }}",
       "decrease_quantity": "إنقاص الكمية",
-      "increase_quantity": "زيادة الكمية"
+      "increase_quantity": "زيادة الكمية",
+      "badge_all_cooktops": "مناسب لكل مواقد الطبخ"
     },
     "b2b": {
       "company_placeholder": "الشركة / الاسم",

@@ -1,13 +1,15 @@
 {%- comment -%}
   LEUMX — Main product
-  Gallery (thumbs + main) + sticky buy box. Gold accents, variant picker,
-  quantity, add-to-cart. Trust row + spec table via blocks. RTL-aware.
-  Original section — no competitor markup. Editable via {% schema %}.
+  Premium cookware layout: gallery (inline-start) + sticky buy box (inline-end).
+  Review-stars slot (Judge.me + generic hook), feature badges, colour swatches,
+  variant picker, quantity, gold add-to-cart, trust row + spec table.
+  RTL-aware via logical properties. Original section — editable via {% schema %}.
 {%- endcomment -%}
 
 {%- liquid
   assign product = product
   assign current = product.selected_or_first_available_variant
+  assign color_names = section.settings.color_option_names | downcase | split: ','
 -%}
 
 <section class="lx-pdp" data-lx-product
@@ -16,7 +18,7 @@
   data-i18n-sold="{{ 'products.product.sold_out' | t | default: 'Sold out' | escape }}">
   <div class="lx-wrap lx-pdp__grid">
 
-    {%- comment -%} ============ Gallery ============ {%- endcomment -%}
+    {%- comment -%} ============ Gallery (inline-start) ============ {%- endcomment -%}
     <div class="lx-pdp__gallery" data-lx-gallery>
       <div class="lx-pdp__stage">
         {%- if product.media.size > 0 -%}
@@ -62,7 +64,7 @@
       {%- endif -%}
     </div>
 
-    {%- comment -%} ============ Buy box (sticky) ============ {%- endcomment -%}
+    {%- comment -%} ============ Buy box (sticky, inline-end) ============ {%- endcomment -%}
     <div class="lx-pdp__info">
       <div class="lx-pdp__info-inner">
 
@@ -70,11 +72,44 @@
           <span class="lx-eyebrow">{{ product.vendor }}</span>
         {%- endif -%}
 
+        {%- comment -%}
+          ---- Review stars slot (above title) ----
+          Judge.me preview badge + a generic hook other apps can target. Both start
+          empty; the wrapper stays 0-height with no margin until a review app injects
+          content (progressive `:has()` reveal), so there are no empty stars / no gap.
+        {%- endcomment -%}
+        {%- if section.settings.show_reviews -%}
+          <div class="lx-pdp__reviews" data-lx-reviews>
+            <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}"
+                 data-product-title="{{ product.title | escape }}"></div>
+            <div class="lx-pdp__reviews-hook" data-product-reviews data-product-id="{{ product.id }}"></div>
+          </div>
+        {%- endif -%}
+
         <h1 class="lx-display lx-pdp__title">{{ product.title }}</h1>
 
         <div class="lx-pdp__price" data-lx-price>
           {%- render 'lx-price', variant: current -%}
         </div>
+
+        {%- comment -%} ---- Feature badges (under price) ---- {%- endcomment -%}
+        {%- assign badge_blocks = section.blocks | where: 'type', 'badge' -%}
+        {%- if badge_blocks.size > 0 -%}
+          <ul class="lx-pdp__badges" role="list">
+            {%- for block in badge_blocks -%}
+              {%- liquid
+                assign btext = block.settings.text
+                if btext == blank
+                  assign btext = 'leumx.product.badge_all_cooktops' | t
+                endif
+              -%}
+              <li class="lx-pdp__badge" {{ block.shopify_attributes }}>
+                {%- render 'lx-icon', icon: block.settings.icon -%}
+                <span>{{ btext }}</span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
 
         {%- if section.settings.show_short and product.metafields.descriptors.subtitle != blank -%}
           <p class="lx-pdp__short">{{ product.metafields.descriptors.subtitle }}</p>
@@ -84,17 +119,51 @@
           {%- unless product.has_only_default_variant -%}
             <div class="lx-pdp__options">
               {%- for option in product.options_with_values -%}
-                <fieldset class="lx-opt" data-option-index="{{ forloop.index0 }}">
-                  <legend class="lx-opt__label">{{ option.name }}</legend>
-                  <div class="lx-opt__values">
+                {%- liquid
+                  assign opt_idx = forloop.index0
+                  assign oname = option.name | downcase | strip
+                  assign is_color = false
+                  for c in color_names
+                    if c | strip == oname
+                      assign is_color = true
+                    endif
+                  endfor
+                -%}
+                <fieldset class="lx-opt{% if is_color %} lx-opt--color{% endif %}" data-option-index="{{ opt_idx }}">
+                  <legend class="lx-opt__label">
+                    {{ option.name }}
+                    <span class="lx-opt__selected" data-opt-selected="{{ opt_idx }}">{{ option.selected_value }}</span>
+                  </legend>
+                  <div class="lx-opt__values{% if is_color %} lx-opt__values--swatch{% endif %}">
                     {%- for value in option.values -%}
-                      {%- assign oid = 'opt-' | append: forloop.index0 | append: '-' | append: value | handle -%}
+                      {%- assign oid = 'opt-' | append: opt_idx | append: '-' | append: value | handle -%}
                       <input type="radio" class="lx-opt__input visually-hidden"
-                             id="{{ oid }}" name="option-{{ forloop.parentloop.index0 }}"
+                             id="{{ oid }}" name="option-{{ opt_idx }}"
                              value="{{ value | escape }}"
                              {% if option.selected_value == value %}checked{% endif %}
-                             data-option-index="{{ forloop.parentloop.index0 }}">
-                      <label for="{{ oid }}" class="lx-opt__chip">{{ value }}</label>
+                             data-option-index="{{ opt_idx }}">
+                      {%- if is_color -%}
+                        {%- liquid
+                          assign sw_img = blank
+                          for v in product.variants
+                            if v.options[opt_idx] == value and sw_img == blank and v.featured_image != blank
+                              assign sw_img = v.featured_image
+                            endif
+                          endfor
+                        -%}
+                        <label for="{{ oid }}" class="lx-swatch" title="{{ value | escape }}">
+                          {%- if sw_img != blank -%}
+                            {{ sw_img | image_url: width: 120 | image_tag:
+                               loading: 'lazy', class: 'lx-swatch__img',
+                               widths: '48,72,120', sizes: '48px', alt: value | escape }}
+                          {%- else -%}
+                            <span class="lx-swatch__chip" style="background-color: {{ value | replace: ';', '' | replace: '"', '' | escape }}"></span>
+                          {%- endif -%}
+                          <span class="visually-hidden">{{ value }}</span>
+                        </label>
+                      {%- else -%}
+                        <label for="{{ oid }}" class="lx-opt__chip">{{ value }}</label>
+                      {%- endif -%}
                     {%- endfor -%}
                   </div>
                 </fieldset>
@@ -182,6 +251,7 @@
 <style>
   .lx-pdp { background: var(--lx-paper); color: var(--lx-ink); padding-block: clamp(2rem, 4vw, 4rem) var(--lx-space); }
   .lx-pdp__grid { display: grid; gap: clamp(2rem, 4vw, 4rem); grid-template-columns: 1fr; }
+  /* Gallery (source-first) = inline-start; buy column = inline-end. Grid mirrors under [dir=rtl] automatically. */
   @media (min-width: 990px) { .lx-pdp__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } }
 
   /* Gallery */
@@ -192,23 +262,48 @@
   .lx-pdp__img--ph { object-fit: contain; padding: 2rem; }
   .lx-pdp__thumbs { display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; margin: .8rem 0 0; padding: 0; }
   .lx-pdp__thumb {
-    inline-size: 68px; block-size: 68px; padding: 0; cursor: pointer; overflow: hidden;
+    position: relative; inline-size: 68px; block-size: 68px; padding: 0; cursor: pointer; overflow: hidden;
     background: var(--lx-cream); border: 1px solid var(--lx-line); border-radius: var(--lx-radius); transition: border-color .2s ease;
   }
   .lx-pdp__thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
   .lx-pdp__thumb.is-active { border-color: var(--lx-gold); }
+  /* Gold active-thumb indicator bar */
+  .lx-pdp__thumb.is-active::after {
+    content: ""; position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 2px; background: var(--lx-gold);
+  }
   .lx-pdp__thumb:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
 
-  /* Buy box */
+  /* Buy box — sticky on desktop, static (collapses cleanly) on mobile */
   @media (min-width: 990px) { .lx-pdp__info-inner { position: sticky; inset-block-start: 96px; } }
+
+  /* Review stars slot: invisible (0-height, no margin) until an app injects content */
+  .lx-pdp__reviews { margin: 0; }
+  .lx-pdp__reviews:has(.jdgm-preview-badge > *),
+  .lx-pdp__reviews:has([data-product-reviews] > *) { margin-block: .35rem 0; }
+
   .lx-pdp__title { font-size: clamp(1.9rem, 1.3rem + 2vw, 2.8rem); margin: .6rem 0 0; }
   .lx-pdp__price { margin-block-start: 1rem; font-family: var(--lx-body); font-size: 1.35rem; font-weight: 600; color: var(--lx-ink); }
   .lx-pdp__short { margin: 1rem 0 0; color: var(--lx-ink-soft); font-family: var(--lx-body); line-height: 1.6; }
 
+  /* Feature badges — gold-outlined pills */
+  .lx-pdp__badges { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 1.25rem 0 0; padding: 0; }
+  .lx-pdp__badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .5rem .85rem; border: 1px solid var(--lx-gold);
+    border-radius: 999px; background: transparent;
+    font-family: var(--lx-body); font-size: .8rem; font-weight: 500; color: var(--lx-ink);
+  }
+  .lx-pdp__badge .lx-svg { inline-size: 16px; block-size: 16px; color: var(--lx-gold); flex: none; }
+
   .lx-pdp__form { margin-block-start: 1.75rem; }
-  .lx-pdp__options { display: grid; gap: 1.25rem; }
+  .lx-pdp__options { display: grid; gap: 1.5rem; }
   .lx-opt { border: 0; padding: 0; margin: 0; }
-  .lx-opt__label { font-family: var(--lx-body); font-size: .74rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--lx-ink-soft); padding: 0; margin-block-end: .6rem; }
+  .lx-opt__label {
+    display: flex; gap: .5rem; align-items: baseline;
+    font-family: var(--lx-body); font-size: .74rem; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--lx-ink-soft); padding: 0; margin-block-end: .6rem;
+  }
+  .lx-opt__selected { color: var(--lx-ink); letter-spacing: .02em; text-transform: none; font-weight: 500; }
   .lx-opt__values { display: flex; flex-wrap: wrap; gap: .5rem; }
   .lx-opt__chip {
     display: inline-flex; align-items: center; min-block-size: 42px; padding: 0 1.1rem; cursor: pointer;
@@ -217,8 +312,24 @@
   }
   .lx-opt__chip:hover { border-color: var(--lx-gold); }
   .lx-opt__input:checked + .lx-opt__chip { border-color: var(--lx-gold); background: var(--lx-navy); color: var(--lx-cream); }
-  .lx-opt__input:focus-visible + .lx-opt__chip { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
+  .lx-opt__input:focus-visible + .lx-opt__chip,
+  .lx-opt__input:focus-visible + .lx-swatch { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
   .lx-opt__input.is-unavailable + .lx-opt__chip { opacity: .4; text-decoration: line-through; }
+
+  /* Colour swatches — square, gold ring on the selected one */
+  .lx-opt__values--swatch { gap: .6rem; }
+  .lx-swatch {
+    inline-size: 48px; block-size: 48px; cursor: pointer; overflow: hidden;
+    border: 1px solid var(--lx-line); border-radius: var(--lx-radius); background: var(--lx-cream);
+    display: block; transition: box-shadow .2s ease, border-color .2s ease;
+  }
+  .lx-swatch__img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-swatch__chip { display: block; inline-size: 100%; block-size: 100%; }
+  .lx-swatch:hover { border-color: var(--lx-gold); }
+  .lx-opt__input:checked + .lx-swatch {
+    border-color: var(--lx-gold);
+    box-shadow: 0 0 0 2px var(--lx-paper), 0 0 0 4px var(--lx-gold);
+  }
 
   .lx-pdp__buy { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: 1.75rem; }
   .lx-qty { display: inline-flex; align-items: center; border: 1px solid var(--lx-line); border-radius: var(--lx-radius); }
@@ -227,6 +338,7 @@
   .lx-qty__btn .lx-svg { inline-size: 16px; block-size: 16px; }
   .lx-qty__input { inline-size: 46px; block-size: 48px; text-align: center; border: 0; background: none; font-family: var(--lx-body); font-size: 1rem; color: var(--lx-ink); -moz-appearance: textfield; }
   .lx-qty__input::-webkit-outer-spin-button, .lx-qty__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  /* Add-to-cart in Leumx gold (inherits .lx-btn) */
   .lx-pdp__add { flex: 1; min-inline-size: 12rem; text-align: center; }
   .lx-pdp__add[disabled] { opacity: .5; cursor: not-allowed; }
 
@@ -247,17 +359,36 @@
   .lx-spec td { color: var(--lx-ink); }
 </style>
 
-
 {% schema %}
 {
   "name": "Leumx Product",
   "tag": "section",
   "settings": [
     { "type": "checkbox", "id": "show_vendor", "label": "Show vendor as eyebrow", "default": true },
+    { "type": "checkbox", "id": "show_reviews", "label": "Show review stars (Judge.me / other apps)", "default": true },
     { "type": "checkbox", "id": "show_short", "label": "Show subtitle (metafield descriptors.subtitle)", "default": false },
+    { "type": "text", "id": "color_option_names", "label": "Option names treated as colour swatches (comma-separated)", "default": "Color, Colour, Couleur, Kleur, Farbe, لون" },
     { "type": "text", "id": "specs_title", "label": "Spec table title", "default": "Specifications" }
   ],
   "blocks": [
+    {
+      "type": "badge",
+      "name": "Feature badge",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "check",
+          "options": [
+            { "value": "check", "label": "Check" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "sparkle", "label": "Sparkle" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "globe", "label": "Globe" }
+          ]
+        },
+        { "type": "text", "id": "text", "label": "Text (leave blank to use the localised default)", "default": "Suitable for all cooktops" }
+      ]
+    },
     {
       "type": "trust",
       "name": "Trust item",
@@ -289,6 +420,7 @@
     {
       "name": "Leumx Product",
       "blocks": [
+        { "type": "badge", "settings": { "icon": "check", "text": "" } },
         { "type": "trust", "settings": { "icon": "shield", "title": "2-year warranty", "text": "Registered on purchase" } },
         { "type": "trust", "settings": { "icon": "truck", "title": "Free shipping", "text": "On orders over the threshold" } },
         { "type": "trust", "settings": { "icon": "check", "title": "Quality checked", "text": "Inspected before dispatch" } },

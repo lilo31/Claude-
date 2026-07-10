@@ -186,3 +186,38 @@ behave (2→3/4-up collection & category, 1→2-col product, stacked→2-col new
   every navy/gold/cream token + two font pickers, wired to the `--lx-*` CSS variables
   via a `{% style %}` override in `layout/theme.liquid`. Renamed theme identity to
   "Leumx". Fonts default to Fraunces/Inter unless the "use font pickers" toggle is on.
+
+## Product page — premium enhancement pass
+
+`sections/lx-main-product.liquid` upgraded to a premium cookware layout; the
+verified variant/gallery/quantity logic was preserved. Re-verified end-to-end in
+headless Chromium (swatch + chip selection updates variant id, price/sale,
+sold-out state, and the selected-value labels) and no overflow at 375/768/990/1440.
+
+1. **Review-stars slot** (above the title) — outputs the Judge.me container
+   `<div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">` plus a
+   generic `[data-product-reviews]` hook other apps can target. Toggle
+   `show_reviews` (default on). The wrapper is 0-height with no margin until an app
+   injects content (progressive `:has()` reveal) — no empty stars, no baked-in gap.
+2. **Feature badges** (under the price) — gold-outlined pills with a thin-line icon +
+   text, as reorderable `badge` **blocks** (icon from the lx-icon set + text). Seeded
+   one default badge; when its text is left blank it falls back to the localised
+   `leumx.product.badge_all_cooktops` → EN "Suitable for all cooktops",
+   AR "مناسب لكل مواقد الطبخ" (added to `en.default.json` + `ar.json`). *Decision:* the
+   preset badge ships with blank text so it is bilingual out of the box; new badges a
+   merchant adds pre-fill the English string and are freely editable.
+3. **Colour swatches** — any option whose name matches `color_option_names`
+   (schema setting; default `Color, Colour, Couleur, Kleur, Farbe, لون`) renders as
+   square swatches instead of chips: the matching variant's image if it has one, else a
+   safe colour chip from the value name. Selected swatch gets a gold ring; they share
+   the same radio inputs as the picker, so price/availability/URL update on select.
+   RTL-mirrored via logical properties. No colour option (or no variants) → no swatch
+   block, no gap. Also added a live selected-value label next to each option name
+   (synced in `leumx.js`).
+4. **Sticky buy box** — confirmed `position: sticky` on desktop (≥990px), static/
+   collapsing on mobile; add-to-cart stays Leumx gold (`.lx-btn`).
+5. **Layout** — gallery inline-start, buy column inline-end (grid mirrors under
+   `[dir="rtl"]`); thumbnail strip under the main image with a gold active-thumb bar.
+
+`templates/product.json` seeds the default badge block and `show_reviews`.
+`leumx-base.css` still loads once.

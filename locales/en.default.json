@@ -533,7 +533,8 @@
     "product": {
       "view_image": "View image {{ number }}",
       "decrease_quantity": "Decrease quantity",
-      "increase_quantity": "Increase quantity"
+      "increase_quantity": "Increase quantity",
+      "badge_all_cooktops": "Suitable for all cooktops"
     },
     "b2b": {
       "company_placeholder": "Company / name",

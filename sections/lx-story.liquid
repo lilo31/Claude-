@@ -1,0 +1,59 @@
+{%- comment -%}
+  LEUMX — Brand story (split image + text on navy)
+{%- endcomment -%}
+
+<section class="lx-story">
+  <div class="lx-story__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 1400 | image_tag:
+         loading: 'lazy', class: 'lx-story__img',
+         widths: '400,600,800,1000,1400', sizes: '(min-width: 990px) 50vw, 100vw',
+         alt: section.settings.image.alt | default: section.settings.heading | default: shop.name | escape }}
+    {%- endif -%}
+  </div>
+  <div class="lx-story__text">
+    <div class="lx-story__inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="lx-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lx-display lx-story__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.body != blank -%}
+        <div class="lx-story__body">{{ section.settings.body }}</div>
+      {%- endif -%}
+      {%- if section.settings.btn_label != blank -%}
+        <a class="lx-btn lx-btn--ghost" href="{{ section.settings.btn_link }}">{{ section.settings.btn_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lx-story { display: grid; grid-template-columns: 1fr; background: var(--lx-navy); color: var(--lx-cream); }
+  @media (min-width: 990px) { .lx-story { grid-template-columns: 1fr 1fr; } }
+  .lx-story__media { min-block-size: 60vh; }
+  .lx-story__img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+  .lx-story__text { display: grid; align-items: center; padding: var(--lx-space) clamp(1.5rem, 5vw, 5rem); }
+  .lx-story__inner { max-inline-size: 34rem; }
+  .lx-story__title { font-size: var(--lx-h2); margin: 1rem 0 1.25rem; }
+  .lx-story__body { font-family: var(--lx-body); line-height: 1.7; color: rgba(246,243,236,.82); }
+  .lx-story__body p { margin: 0 0 1rem; }
+  .lx-story__inner .lx-btn { margin-block-start: 1.5rem; }
+</style>
+
+{% schema %}
+{
+  "name": "Leumx Story",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Leumx standard" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Engineered in Europe, made to last." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Every Leumx piece is built for the way modern kitchens really work — durable materials, honest construction, and finishes that hold up to daily life.</p>" },
+    { "type": "text", "id": "btn_label", "label": "Button", "default": "Discover the brand" },
+    { "type": "url",  "id": "btn_link",  "label": "Button link" }
+  ],
+  "presets": [{ "name": "Leumx Story" }]
+}
+{% endschema %}

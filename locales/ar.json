@@ -1,0 +1,55 @@
+{
+  "general": {
+    "menu": "القائمة",
+    "home": "الرئيسية",
+    "primary_nav": "التنقل الرئيسي",
+    "payment_methods": "طرق الدفع",
+    "search": {
+      "search": "بحث"
+    }
+  },
+  "sections": {
+    "cart": {
+      "title": "السلة"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "الحساب"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "أضف إلى السلة",
+      "sold_out": "نفدت الكمية",
+      "on_sale": "تخفيض"
+    }
+  },
+  "newsletter": {
+    "email": "البريد الإلكتروني",
+    "subscribe": "اشتراك",
+    "success": "شكرًا لك — أنت الآن على القائمة."
+  },
+  "contact": {
+    "form": {
+      "post_success": "شكرًا لك — سيتواصل معك فريق المبيعات لدينا."
+    }
+  },
+  "leumx": {
+    "product": {
+      "view_image": "عرض الصورة {{ number }}",
+      "decrease_quantity": "إنقاص الكمية",
+      "increase_quantity": "زيادة الكمية",
+      "badge_all_cooktops": "مناسب لكل مواقد الطبخ"
+    },
+    "b2b": {
+      "company_placeholder": "الشركة / الاسم",
+      "email_placeholder": "البريد الإلكتروني للعمل",
+      "message_placeholder": "أخبرنا عن نشاطك التجاري"
+    },
+    "editor": {
+      "choose_collection": "اختر مجموعة في محرر القالب لعرض المنتجات هنا.",
+      "add_tiles": "أضف بطاقات في محرر القالب لعرض مجموعاتك."
+    }
+  }
+}

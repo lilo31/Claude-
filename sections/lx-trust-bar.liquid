@@ -1,0 +1,114 @@
+{%- comment -%}
+  LEUMX — Trust bar
+  Thin strip of 3–4 icons + microcopy (free shipping, warranty, QC, secure).
+  Works on light or navy surface. Block-driven. RTL-aware.
+{%- endcomment -%}
+
+<section class="lx-trust lx-trust--{{ section.settings.theme }}"
+         style="--surface: {{ section.settings.bg }};">
+  <div class="lx-wrap">
+    <ul class="lx-trust__row" role="list" data-count="{{ section.blocks.size }}">
+      {%- for block in section.blocks -%}
+        <li class="lx-trust__item" {{ block.shopify_attributes }}>
+          <span class="lx-trust__icon">{%- render 'lx-icon', icon: block.settings.icon -%}</span>
+          <span class="lx-trust__copy">
+            <strong class="lx-trust__title">{{ block.settings.title }}</strong>
+            {%- if block.settings.text != blank -%}
+              <span class="lx-trust__sub">{{ block.settings.text }}</span>
+            {%- endif -%}
+          </span>
+        </li>
+      {%- else -%}
+        <li class="lx-trust__item">Add trust items in the theme editor.</li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .lx-trust { background: var(--surface, var(--lx-cream)); padding-block: clamp(1.25rem, 2.5vw, 1.75rem); }
+  .lx-trust--navy { --surface: var(--lx-navy); }
+
+  .lx-trust__row {
+    display: grid; gap: 1rem clamp(1rem, 3vw, 2.5rem); list-style: none; margin: 0; padding: 0;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 750px) {
+    .lx-trust__row[data-count="3"] { grid-template-columns: repeat(3, 1fr); }
+    .lx-trust__row[data-count="4"] { grid-template-columns: repeat(4, 1fr); }
+    .lx-trust__row { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .lx-trust__item {
+    display: flex; align-items: center; gap: .75rem; justify-content: center; text-align: start;
+    font-family: var(--lx-body); color: var(--lx-ink);
+  }
+  .lx-trust--navy .lx-trust__item { color: var(--lx-cream); }
+
+  .lx-trust__icon { flex: none; display: inline-grid; place-items: center; color: var(--lx-gold); }
+  .lx-trust__icon .lx-svg { inline-size: 26px; block-size: 26px; }
+
+  .lx-trust__copy { display: flex; flex-direction: column; line-height: 1.25; min-inline-size: 0; }
+  .lx-trust__title { font-size: .85rem; font-weight: 600; }
+  .lx-trust__sub { font-size: .76rem; color: var(--lx-ink-soft); }
+  .lx-trust--navy .lx-trust__sub { color: rgba(246,243,236,.7); }
+
+  /* Optional gold hairline dividers between items on wide screens */
+  @media (min-width: 750px) {
+    .lx-trust__item:not(:first-child) { position: relative; }
+    .lx-trust__item:not(:first-child)::before {
+      content: ""; position: absolute; inset-inline-start: calc(-1 * clamp(.5rem, 1.5vw, 1.25rem));
+      inset-block: 15%; inline-size: 1px; background: rgba(195,154,78,.35);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Leumx Trust Bar",
+  "tag": "section",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "select", "id": "theme", "label": "Theme", "default": "light",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "navy", "label": "Navy" }
+      ]
+    },
+    { "type": "color", "id": "bg", "label": "Background (overrides theme)", "default": "#F6F3EC" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "truck",
+          "options": [
+            { "value": "truck", "label": "Truck / shipping" },
+            { "value": "shield", "label": "Shield / warranty" },
+            { "value": "check", "label": "Check / QC" },
+            { "value": "sparkle", "label": "Sparkle / quality" },
+            { "value": "leaf", "label": "Leaf / materials" },
+            { "value": "globe", "label": "Globe / worldwide" }
+          ]
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "Free shipping" },
+        { "type": "text", "id": "text", "label": "Subtext", "default": "On qualifying orders" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Leumx Trust Bar",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "truck", "title": "Free shipping", "text": "On qualifying orders" } },
+        { "type": "item", "settings": { "icon": "shield", "title": "2-year warranty", "text": "On every Leumx piece" } },
+        { "type": "item", "settings": { "icon": "check", "title": "Quality checked", "text": "Inspected before dispatch" } },
+        { "type": "item", "settings": { "icon": "leaf", "title": "Built to last", "text": "Premium materials" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

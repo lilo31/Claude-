@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": {
+      "type": "lx-main-product",
+      "settings": {
+        "show_vendor": true,
+        "show_reviews": true,
+        "specs_title": "Specifications"
+      },
+      "blocks": {
+        "badge-cooktops": { "type": "badge", "settings": { "icon": "check", "text": "" } },
+        "trust-warranty": { "type": "trust", "settings": { "icon": "shield", "title": "2-year warranty", "text": "Registered on purchase" } },
+        "trust-shipping": { "type": "trust", "settings": { "icon": "truck", "title": "Free shipping", "text": "On qualifying orders" } },
+        "trust-qc": { "type": "trust", "settings": { "icon": "check", "title": "Quality checked", "text": "Inspected before dispatch" } },
+        "spec-material": { "type": "spec", "settings": { "label": "Material", "value": "18/10 stainless steel" } },
+        "spec-compat": { "type": "spec", "settings": { "label": "Compatibility", "value": "All hobs incl. induction" } },
+        "spec-care": { "type": "spec", "settings": { "label": "Care", "value": "Dishwasher safe" } }
+      },
+      "block_order": ["badge-cooktops", "trust-warranty", "trust-shipping", "trust-qc", "spec-material", "spec-compat", "spec-care"]
+    }
+  },
+  "order": ["main"]
+}

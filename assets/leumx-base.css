@@ -1,0 +1,127 @@
+/* =========================================================
+   LEUMX — Brand foundation
+   Navy-dominant, warm gold accent. RTL/LTR aware.
+   Drop this in /assets and load it once in theme.liquid:
+   {{ 'leumx-base.css' | asset_url | stylesheet_tag }}
+   ========================================================= */
+
+:root {
+  /* --- Color ------------------------------------------- */
+  --lx-navy:        #0E1D33;   /* primary surface / ink   */
+  --lx-navy-deep:   #0A1526;   /* footer / overlays       */
+  --lx-navy-soft:   #16294A;   /* raised cards on navy    */
+  --lx-gold:        #C39A4E;   /* accent — hairlines, CTA */
+  --lx-gold-bright: #D8B368;   /* hover on gold           */
+  --lx-cream:       #F6F3EC;   /* light section surface   */
+  --lx-paper:       #FCFBF8;   /* base page background    */
+  --lx-ink:         #1B2431;   /* body text on light      */
+  --lx-ink-soft:    #55606E;   /* secondary text          */
+  --lx-line:        #E4DED2;   /* dividers on light       */
+
+  /* --- Type -------------------------------------------- */
+  --lx-display: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  --lx-body:    "Inter", "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* fluid display scale */
+  --lx-h1: clamp(2.6rem, 1.4rem + 4vw, 5rem);
+  --lx-h2: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  --lx-h3: clamp(1.3rem, 1rem + 1vw, 1.6rem);
+
+  /* --- Rhythm ------------------------------------------ */
+  --lx-space: clamp(4rem, 2rem + 6vw, 8rem);   /* section pad */
+  --lx-max:   1360px;                          /* content max */
+  --lx-radius: 2px;                            /* nearly square, luxury */
+}
+
+/* Arabic display fallback — keep serif feel with a strong Arabic face */
+:root[lang="ar"], [dir="rtl"] {
+  --lx-display: "Noto Naskh Arabic", "Amiri", "Fraunces", Georgia, serif;
+  --lx-body:    "Noto Kufi Arabic", "Cairo", "Inter", sans-serif;
+}
+
+/* --- Base utilities the sections rely on ---------------- */
+.lx-wrap {
+  max-width: var(--lx-max);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.5rem + 3vw, 3rem);
+}
+
+.lx-eyebrow {
+  font-family: var(--lx-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--lx-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+/* the gold hairline that precedes an eyebrow — Leumx signature */
+.lx-eyebrow::before {
+  content: "";
+  inline-size: 2.25rem;
+  block-size: 1px;
+  background: var(--lx-gold);
+  display: inline-block;
+}
+
+.lx-display {
+  font-family: var(--lx-display);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+}
+
+.lx-btn {
+  --btn-bg: var(--lx-gold);
+  --btn-ink: var(--lx-navy);
+  font-family: var(--lx-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1rem 2.25rem;
+  border: 1px solid var(--btn-bg);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  border-radius: var(--lx-radius);
+  text-decoration: none;
+  display: inline-block;
+  transition: background .25s ease, color .25s ease, border-color .25s ease;
+  cursor: pointer;
+}
+.lx-btn:hover { background: var(--lx-gold-bright); border-color: var(--lx-gold-bright); }
+.lx-btn:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 3px; }
+
+/* Global keyboard focus — gold outline on every interactive control.
+   Individual sections may refine, but this guarantees a visible baseline. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--lx-gold);
+  outline-offset: 2px;
+}
+
+/* Screen-reader-only utility: label exists for AT but is not displayed. */
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px; block-size: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.lx-btn--ghost {
+  --btn-bg: transparent;
+  --btn-ink: var(--lx-cream);
+  border-color: rgba(255,255,255,.35);
+}
+.lx-btn--ghost:hover { border-color: var(--lx-gold); color: var(--lx-gold); background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

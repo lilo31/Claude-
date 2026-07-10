@@ -1,0 +1,106 @@
+{%- comment -%}
+  LEUMX — Featured collection grid
+  Pulls real products from a chosen collection. Gold underline reveal on hover.
+{%- endcomment -%}
+
+<section class="lx-coll" style="--surface: {{ section.settings.bg }};">
+  <div class="lx-wrap">
+    <header class="lx-coll__head">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="lx-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="lx-display lx-coll__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.view_all != blank and section.settings.collection != blank -%}
+        <a class="lx-coll__all" href="{{ section.settings.collection.url }}">{{ section.settings.view_all }} <span class="lx-arrow" aria-hidden="true">→</span></a>
+      {%- endif -%}
+    </header>
+
+    <div class="lx-grid">
+      {%- assign coll = section.settings.collection -%}
+      {%- for product in coll.products limit: section.settings.count -%}
+        <a class="lx-card" href="{{ product.url }}">
+          <div class="lx-card__media">
+            {%- if product.featured_image -%}
+              {{ product.featured_image | image_url: width: 800 | image_tag:
+                 loading: 'lazy', class: 'lx-card__img',
+                 widths: '200,300,400,600,800', sizes: '(min-width: 990px) 25vw, 50vw',
+                 alt: product.featured_image.alt | default: product.title | escape }}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'lx-card__img' }}
+            {%- endif -%}
+          </div>
+          <div class="lx-card__body">
+            <h3 class="lx-card__name">{{ product.title }}</h3>
+            <span class="lx-card__price">{{ product.price | money }}</span>
+          </div>
+        </a>
+      {%- else -%}
+        <p class="lx-coll__empty">{{ 'leumx.editor.choose_collection' | t }}</p>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lx-coll { background: var(--surface, var(--lx-paper)); padding-block: var(--lx-space); color: var(--lx-ink); }
+  .lx-coll__head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 1.5rem; flex-wrap: wrap; margin-block-end: clamp(2rem, 4vw, 3.5rem);
+  }
+  .lx-coll__title { font-size: var(--lx-h2); margin: 1rem 0 0; }
+  .lx-coll__all {
+    font-family: var(--lx-body); font-size: .82rem; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--lx-ink); text-decoration: none;
+    border-block-end: 1px solid var(--lx-gold); padding-block-end: 3px; white-space: nowrap;
+  }
+  .lx-coll__all:hover { color: var(--lx-gold); }
+  .lx-arrow { display: inline-block; }
+  [dir="rtl"] .lx-arrow { transform: scaleX(-1); }
+
+  .lx-grid {
+    display: grid; gap: clamp(1rem, 2vw, 2rem);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 750px)  { .lx-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 990px)  { .lx-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .lx-card { text-decoration: none; color: inherit; display: block; }
+  .lx-card__media {
+    aspect-ratio: 4 / 5; overflow: hidden; background: var(--lx-cream);
+    border: 1px solid var(--lx-line);
+  }
+  .lx-card__img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+  .lx-card:hover .lx-card__img { transform: scale(1.05); }
+
+  .lx-card__body { padding-block-start: 1rem; }
+  .lx-card__name {
+    font-family: var(--lx-body); font-size: .95rem; font-weight: 600;
+    margin: 0; display: inline; background-image: linear-gradient(var(--lx-gold), var(--lx-gold));
+    background-size: 0% 1px; background-repeat: no-repeat; background-position: 0 100%;
+    transition: background-size .3s ease; padding-block-end: 2px;
+  }
+  [dir="rtl"] .lx-card__name { background-position: 100% 100%; }
+  .lx-card:hover .lx-card__name { background-size: 100% 1px; }
+  .lx-card__price { display: block; margin-block-start: .35rem; color: var(--lx-ink-soft); font-family: var(--lx-body); font-size: .9rem; }
+  .lx-coll__empty { color: var(--lx-ink-soft); font-family: var(--lx-body); }
+</style>
+
+{% schema %}
+{
+  "name": "Leumx Collection",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bestsellers" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The kitchen essentials" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "count", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 8 },
+    { "type": "text", "id": "view_all", "label": "View-all label", "default": "View all" },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#FCFBF8" }
+  ],
+  "presets": [{ "name": "Leumx Collection" }]
+}
+{% endschema %}

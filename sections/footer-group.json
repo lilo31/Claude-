@@ -1,0 +1,22 @@
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "lx-footer": {
+      "type": "lx-footer",
+      "settings": {
+        "show_newsletter": true,
+        "show_language": true,
+        "show_payments": true
+      },
+      "blocks": {
+        "col-shop": { "type": "menu", "settings": { "heading": "Shop", "menu": "footer" } },
+        "col-company": { "type": "menu", "settings": { "heading": "Company", "menu": "footer" } },
+        "col-support": { "type": "menu", "settings": { "heading": "Support", "menu": "footer" } },
+        "col-trade": { "type": "text", "settings": { "heading": "Trade", "b2b_label": "Wholesale enquiries" } }
+      },
+      "block_order": ["col-shop", "col-company", "col-support", "col-trade"]
+    }
+  },
+  "order": ["lx-footer"]
+}
